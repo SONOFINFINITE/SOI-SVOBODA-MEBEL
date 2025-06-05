@@ -1,0 +1,127 @@
+@import './fonts.scss';
+@import './variables.scss';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  
+  /* Для Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent) transparent;
+}
+
+/* Основные стили скроллбара с принудительно прозрачным треком */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background-color: transparent !important;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-track-piece {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-accent);
+  border-radius: 20px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  min-height: 30px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(212, 197, 185, 0.9);
+}
+
+::-webkit-scrollbar-corner,
+::-webkit-scrollbar-button,
+::-webkit-resizer {
+  background-color: transparent !important;
+  border: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+/* Стили скроллбара для темных секций */
+.dark-bg::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.dark-bg::-webkit-scrollbar-thumb {
+  background-color: var(--color-accent);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+.dark-bg::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(212, 197, 185, 0.9);
+}
+
+.dark-bg::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+/* Класс для применения кастомного скроллбара к конкретным элементам */
+.custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    border: 1px solid transparent;
+  }
+}
+
+html, body {
+  font-family: $font-family-primary;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.container {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $container-padding;
+
+  @media (max-width: $breakpoint-laptop) {
+    padding: 0 $spacing-md;
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: 0 $spacing-sm;
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: 0 $spacing-xs;
+  }
+} 

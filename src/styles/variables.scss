@@ -1,0 +1,32 @@
+// Цвета
+:root {
+  --color-primary: #1a1a1a;
+  --color-secondary: #ece6e6;
+  --color-accent: #d4c5b9;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #666666;
+  --color-white: #ffffff;
+  --color-background: #fafafa;
+  --color-background-hero: rgba(212, 197, 185, 0.1);
+}
+
+// Типография
+$font-family-primary: 'Resist Sans', sans-serif;
+
+// Размеры
+$container-max-width: 1440px;
+$container-padding: 20px;
+
+// Breakpoints
+$breakpoint-desktop: 1440px;
+$breakpoint-laptop: 1024px;
+$breakpoint-tablet: 768px;
+$breakpoint-mobile: 480px;
+
+// Отступы
+$spacing-xs: 8px;
+$spacing-sm: 16px;
+$spacing-md: 24px;
+$spacing-lg: 32px;
+$spacing-xl: 48px;
+$spacing-xxl: 64px; 
