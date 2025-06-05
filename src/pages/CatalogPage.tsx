@@ -85,7 +85,7 @@ const products = [
 ];
 
 const CatalogPage: React.FC = () => {
-  const [activeProduct, setActiveProduct] = useState(0);
+  const [, setActiveProduct] = useState(0);
   const [loading, setLoading] = useState(true);
   const sectionsRef = useRef<HTMLDivElement>(null);
   const productRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -195,23 +195,6 @@ const CatalogPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-          
-          <div className={styles.productNavigation}>
-            {products.map((product, index) => (
-              <button 
-                key={product.id}
-                className={`${styles.navDot} ${activeProduct === index ? styles.navDotActive : ''}`}
-                onClick={() => {
-                  const targetSection = productRefs.current[index];
-                  if (targetSection) {
-                    targetSection.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
-              >
-                <span className={styles.srOnly}>{product.name}</span>
-              </button>
             ))}
           </div>
         </div>
