@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import classNames from 'classnames';
 import styles from './drawer-menu.module.scss';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export interface DrawerMenuProps {
     isOpen: boolean;
@@ -12,6 +12,7 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({ isOpen, onClose }) => {
     const scrollPositionRef = useRef(0);
     const bodyRef = useRef<HTMLElement | null>(null);
     const location = useLocation();
+    const navigate = useNavigate();
     const isCatalogPage = location.pathname.includes('/catalog');
 
     useEffect(() => {
@@ -85,28 +86,44 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({ isOpen, onClose }) => {
                             <a href="#services" onClick={(e) => {
                                 e.preventDefault();
                                 onClose();
-                                document.querySelector('#services')?.scrollIntoView({ behavior: 'smooth' });
+                                if (isCatalogPage) {
+                                    navigate('/', { state: { scrollToId: 'services' } });
+                                } else {
+                                    document.querySelector('#services')?.scrollIntoView({ behavior: 'smooth' });
+                                }
                             }}>Почему мы</a>
                         </li>
                         <li>
                             <a href="#hc" onClick={(e) => {
                                 e.preventDefault();
                                 onClose();
-                                document.querySelector('#hc')?.scrollIntoView({ behavior: 'smooth' });
+                                if (isCatalogPage) {
+                                    navigate('/', { state: { scrollToId: 'hc' } });
+                                } else {
+                                    document.querySelector('#hc')?.scrollIntoView({ behavior: 'smooth' });
+                                }
                             }}>Производство</a>
                         </li>
                         <li>
                             <a href="#textonpic" onClick={(e) => {
                                 e.preventDefault();
                                 onClose();
-                                document.querySelector('#textonpic')?.scrollIntoView({ behavior: 'smooth' });
+                                if (isCatalogPage) {
+                                    navigate('/', { state: { scrollToId: 'textonpic' } });
+                                } else {
+                                    document.querySelector('#textonpic')?.scrollIntoView({ behavior: 'smooth' });
+                                }
                             }}>Экологичность</a>
                         </li>
                         <li>
                             <a href="#faq" onClick={(e) => {
                                 e.preventDefault();
                                 onClose();
-                                document.querySelector('#faq')?.scrollIntoView({ behavior: 'smooth' });
+                                if (isCatalogPage) {
+                                    navigate('/', { state: { scrollToId: 'faq' } });
+                                } else {
+                                    document.querySelector('#faq')?.scrollIntoView({ behavior: 'smooth' });
+                                }
                             }}>FAQ</a>
                         </li>
                         <li>

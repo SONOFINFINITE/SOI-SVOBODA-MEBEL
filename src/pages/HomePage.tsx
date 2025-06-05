@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Header from '../components/Header/Header';
 import Hero from '../components/Hero/Hero';
 import { WhySM } from '../components/WhySM/why-quiet-walls';
@@ -10,15 +11,27 @@ import styles from './HomePage.module.scss';
 
 const HomePage: React.FC = () => {
   const [, setLoading] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     // Имитация загрузки
     const timer = setTimeout(() => {
       setLoading(false);
+      
+      // Проверяем, есть ли параметр scrollToId в state
+      if (location.state && location.state.scrollToId) {
+        const id = location.state.scrollToId;
+        setTimeout(() => {
+          const element = document.getElementById(id);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100); // Небольшая задержка, чтобы элементы успели отрендериться
+      }
     }, 2500);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [location.state]);
 
   return (
     <>
