@@ -13,7 +13,8 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({ isOpen, onClose }) => {
     const bodyRef = useRef<HTMLElement | null>(null);
     const location = useLocation();
     const navigate = useNavigate();
-    const isCatalogPage = location.pathname.includes('/catalog');
+    const isCatalogPage = location.pathname.includes('/catalog') || 
+                         (location.pathname.includes('/collections') && location.pathname !== '/collections');
 
     useEffect(() => {
         // Получаем ссылку на body для последующего использования
@@ -127,7 +128,7 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({ isOpen, onClose }) => {
                             }}>FAQ</a>
                         </li>
                         <li>
-                            <a href="/catalog">Каталог</a>
+                            <a href="/collections">Коллекции</a>
                         </li>
                     </ul>
                 </nav>

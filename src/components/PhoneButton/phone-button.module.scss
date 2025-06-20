@@ -1,0 +1,179 @@
+@import '../../styles/variables.scss';
+
+.phoneButton {
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  
+  // Анимация пульса
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    opacity: 0.4;
+    transform: scale(1);
+    animation: pulse 2s infinite;
+  }
+  
+  // Иконка
+  svg {
+    position: relative;
+    z-index: 1;
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
+  }
+  
+  // Hover эффекты
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+    
+    svg {
+      transform: scale(1.1);
+    }
+    
+    &::before {
+      animation-duration: 1s;
+      opacity: 0.6;
+    }
+  }
+  
+  // Active эффект
+  &:active {
+    transform: translateY(0);
+    
+    &::before {
+      animation-duration: 0.5s;
+      opacity: 0.8;
+    }
+  }
+  
+  // Focus для доступности
+  &:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  
+  // Планшеты
+  @media (max-width: $breakpoint-laptop) {
+    bottom: 25px;
+    left: 25px;
+    width: 56px;
+    height: 56px;
+    
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+  
+  // Планшеты (портрет)
+  @media (max-width: $breakpoint-tablet) {
+    bottom: 20px;
+    left: 20px;
+    width: 52px;
+    height: 52px;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  
+  // Мобильные устройства
+  @media (max-width: $breakpoint-mobile) {
+    bottom: 16px;
+    left: 16px;
+    width: 48px;
+    height: 48px;
+    
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+  
+  // Очень маленькие экраны
+  @media (max-width: 360px) {
+    bottom: 12px;
+    left: 12px;
+    width: 44px;
+    height: 44px;
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+// Анимация пульса
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+// Светлая тема кнопки
+.phoneButtonLight {
+  background-color: var(--color-white);
+  color: var(--color-primary);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  
+  &::before {
+    background-color: var(--color-white);
+  }
+  
+  &:hover {
+    background-color: var(--color-secondary);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+    
+    &::before {
+      background-color: var(--color-secondary);
+    }
+  }
+  
+  &:active {
+    &::before {
+      background-color: var(--color-accent);
+    }
+  }
+}
+
+// Дополнительные стили для темной темы (если потребуется)
+.phoneButton.dark {
+  background-color: var(--color-accent);
+  color: var(--color-primary);
+  
+  &::before {
+    background-color: var(--color-accent);
+  }
+} 

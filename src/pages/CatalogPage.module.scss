@@ -1,4 +1,4 @@
-@import '../styles/variables.scss';
+
 
 // Экран загрузки
 .loaderContainer {
@@ -89,6 +89,114 @@
   padding-top: 0;
 }
 
+// Заголовок коллекции и хлебные крошки
+.collectionHeader {
+  padding: 6rem 2rem 2rem;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, transparent 100%);
+  
+  @media (max-width: 768px) {
+    padding: 5rem 1rem 1.5rem;
+  }
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.breadcrumbLink {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: inherit;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+.breadcrumbSeparator {
+  margin: 0 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.breadcrumbCurrent {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.collectionTitle {
+  font-size: 3.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: white;
+  
+  @media (max-width: 1024px) {
+    font-size: 2.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.collectionDescription {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 600px;
+  margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+}
+
+// Пустая коллекция
+.emptyCollection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  padding: 2rem;
+  text-align: center;
+  
+  h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: white;
+  }
+  
+  p {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 2rem;
+  }
+  
+  button {
+    padding: 1rem 2rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50px;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+  }
+}
+
 .catalogContent {
   padding: 0;
 }
@@ -139,15 +247,15 @@
   height: 100vh;
   width: 100%;
   position: relative;
-  will-change: opacity;
+  will-change: opacity, transform;
   
   // Убираем отступы между секциями
   margin: 0;
   padding: 0;
   
-  @media (max-width: 992px) {
-    height: auto;
-    min-height: min-content;
+  @media (max-width: 1024px) {
+    height: 100dvh;
+    min-height: 100dvh;
   }
 }
 
@@ -159,18 +267,18 @@
   height: 100vh;
   overflow: hidden;
   
-  @media (max-width: 992px) {
+  @media (max-width: 1024px) {
     position: relative;
-    height: auto;
-    min-height: min-content;
+    height: 100dvh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
   }
   
   @media (max-width: 576px) {
     position: relative;
-    height: auto;
-    min-height: min-content;  
+    height: 100dvh;
+    min-height: 100dvh;  
   }
 }
 
@@ -184,14 +292,16 @@
   background-position: center;
   transition: transform 0.8s ease;
   
-  @media (max-width: 992px) {
+  @media (max-width: 1024px) {
     position: relative;
-    height: 50vh;
+    height: 60dvh;
+    flex-shrink: 0;
   }
   
   @media (max-width: 576px) {
     position: relative;
-    height: 50dvh;
+    height: 55dvh;
+    flex-shrink: 0;
   }
   
   &::before {
@@ -204,7 +314,7 @@
     background: linear-gradient(to right, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0) 100%);
     z-index: 1;
     
-    @media (max-width: 992px) {
+    @media (max-width: 1024px) {
       background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.2) 100%);
     }
     
@@ -241,23 +351,28 @@
   z-index: 2;
   color: white;
   
-  @media (max-width: 992px) {
+  @media (max-width: 1024px) {
     position: relative;
-    height: auto;
+    height: 40dvh;
     padding: 0;
-    margin-top: -3rem;
+    margin-top: 0;
+    flex: 1;
+    overflow-y: auto;
   }
   
   @media (max-width: 768px) {
     padding: 0;
-    margin-top: -3rem;
+    margin-top: 0;
+    height: 45dvh;
   }
   
   @media (max-width: 576px) {
     position: relative;
-    height: auto;
+    height: 45dvh;
     padding: 0;
-    margin-top: -3rem;
+    margin-top: 0;
+    flex: 1;
+    overflow-y: auto;
   }
 }
 
@@ -267,8 +382,9 @@
   .productInfoContent {
     margin-left: 5%;
     
-    @media (max-width: 992px) {
+    @media (max-width: 1024px) {
       margin-left: 0;
+      overflow-y: hidden;
     }
     
     @media (max-width: 576px) {
@@ -297,7 +413,7 @@
   .productInfoContent {
     margin-right: 5%;
     
-    @media (max-width: 992px) {
+    @media (max-width: 1024px) {
       margin-right: 0;
     }
     
@@ -310,7 +426,7 @@
     &::before {
       background: linear-gradient(to left, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0) 100%);
       
-      @media (max-width: 992px) {
+      @media (max-width: 1024px) {
         background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.2) 100%);
       }
       
@@ -328,35 +444,50 @@
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
   border-radius: 12px;
-  animation: fadeIn 0.8s ease forwards;
+  will-change: opacity, transform;
   
   @media (max-width: 1200px) {
     width: 60%;
     max-width: 100%;
   }
   
-  @media (max-width: 992px) {
+  @media (max-width: 1024px) {
     width: 100%;
     max-width: 100%;
-    padding: 2rem;
-    border-radius: 12px 12px 0 0;
-    margin: 0 auto;
+    padding: 1.5rem;
+    border-radius: 0;
+    margin: 0;
     background: #1a1a1a;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    opacity: 1;
+    transform: translateY(0);
+    animation: fadeInTablet 0.5s ease-out;
   }
   
   @media (max-width: 768px) {
     width: 100%;
     max-width: 100%;
-    padding: 1.5rem;
-    border-radius: 12px 12px 0 0;
+    padding: 1.25rem;
+    border-radius: 0;
     background: #1a1a1a;
+    height: 100%;
   }
   
   @media (max-width: 576px) {
     width: 100%;
-    padding: 1.5rem;
-    border-radius: 12px 12px 0 0;
+    padding: 1.25rem;
+    border-radius: 0;
     background: #1a1a1a;
+    height: 100%;
+    overflow-y: auto;
+  }
+  
+  @media (max-width: 375px) {
+    padding: 0.9rem;
   }
 }
 
@@ -372,47 +503,68 @@
 }
 
 .productName {
-  font-size: 4.5rem;
+  font-size: 5rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
   line-height: 1.1;
   letter-spacing: -1px;
   text-transform: uppercase;
   
-  @media (max-width: 992px) {
-    font-size: 3rem;
+  @media (max-width: 1200px) {
+    font-size: 4.5rem;
+  }
+  
+  @media (max-width: 1024px) {
+    font-size: 3.5rem;
   }
   
   @media (max-width: 768px) {
-    font-size: 2.5rem;
+    font-size: 2.75rem;
   }
   
   @media (max-width: 576px) {
-    font-size: 2rem;
+    font-size: 2.25rem;
     width: 100%;
+    margin-bottom: 0.3rem;
+    line-height: 1;
+  }
+  
+  @media (max-width: 375px) {
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.2rem;
   }
 }
 
 .productPrice {
-  font-size: 2rem;
+  font-size: 2.25rem;
   font-weight: 900;
   margin-bottom: 2rem;
   color: var(--color-accent);
   
-  @media (max-width: 992px) {
-    font-size: 1.75rem;
+  @media (max-width: 1200px) {
+    font-size: 2rem;
+  }
+  
+  @media (max-width: 1024px) {
+    font-size: 1.9rem;
     margin-bottom: 0;
   }
   
   @media (max-width: 768px) {
-    font-size: 1.5rem;
+    font-size: 1.65rem;
     margin-bottom: 0;
   }
   
   @media (max-width: 576px) {
-    font-size: 1.25rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
     width: 100%;
+  }
+  
+  @media (max-width: 375px) {
+    font-size: 1.05rem;
+    margin-bottom: 0.75rem;
   }
 }
 
@@ -421,7 +573,7 @@
   flex-direction: column;
   gap: 2rem;
   
-  @media (max-width: 992px) {
+  @media (max-width: 1024px) {
     gap: 1.5rem;
   }
   
@@ -430,26 +582,41 @@
   }
   
   @media (max-width: 576px) {
-    gap: 1rem;
+    gap: 1.25rem;
+  }
+  
+  @media (max-width: 375px) {
+    gap: 0.75rem;
   }
 }
 
 .productDescription {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   line-height: 1.6;
   margin-bottom: 1rem;
   
-  @media (max-width: 992px) {
-    font-size: 1.1rem;
+  @media (max-width: 1200px) {
+    font-size: 1.25rem;
+  }
+  
+  @media (max-width: 1024px) {
+    font-size: 1.15rem;
   }
   
   @media (max-width: 768px) {
-    font-size: 1rem;
+    font-size: 1.05rem;
     line-height: 1.5;
   }
   
   @media (max-width: 576px) {
-    font-size: 0.95rem;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+  }
+  
+  @media (max-width: 375px) {
+    font-size: 0.85rem;
+    line-height: 1.35;
     margin-bottom: 0.5rem;
   }
 }
@@ -463,7 +630,7 @@
   border-radius: 8px;
   padding: 1.5rem;
   
-  @media (max-width: 992px) {
+  @media (max-width: 1024px) {
     padding: 1.25rem;
     gap: 0.75rem;
     background: rgba(255, 255, 255, 0.05);
@@ -476,10 +643,16 @@
   }
   
   @media (max-width: 576px) {
-    padding: 1rem;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    padding: 1.25rem;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
     background: rgba(255, 255, 255, 0.05);
+  }
+  
+  @media (max-width: 375px) {
+    padding: 0.8rem;
+    gap: 0.4rem;
+    margin-bottom: 0.4rem;
   }
 }
 
@@ -502,23 +675,49 @@
 }
 
 .specsLabel {
-  font-size: 0.875rem;
+  font-size: 0.95rem;
   opacity: 0.7;
   text-transform: uppercase;
   letter-spacing: 1px;
   
+  @media (max-width: 1200px) {
+    font-size: 0.875rem;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+    letter-spacing: 0.8px;
+  }
+  
   @media (max-width: 576px) {
-    font-size: 0.75rem;
+    font-size: 0.825rem;
     letter-spacing: 0.5px;
+  }
+  
+  @media (max-width: 375px) {
+    font-size: 0.65rem;
+    letter-spacing: 0.2px;
   }
 }
 
 .specsValue {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 500;
   
+  @media (max-width: 1200px) {
+    font-size: 1rem;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 0.95rem;
+  }
+  
   @media (max-width: 576px) {
-    font-size: 0.875rem;
+    font-size: 0.95rem;
+  }
+  
+  @media (max-width: 375px) {
+    font-size: 0.775rem;
   }
 }
 
@@ -734,9 +933,24 @@
   padding: 0.5rem 0;
   margin-top: auto;
   
-  @media (max-width: 576px) {
+  @media (max-width: 1024px) {
     display: block;
     margin-top: 1rem;
+    position: absolute;
+    bottom: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+  }
+  
+  @media (max-width: 576px) {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
   }
 }
 
@@ -817,6 +1031,18 @@
   }
 }
 
+/* Быстрая анимация для планшетов */
+@keyframes fadeInTablet {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 576px) {
   .productInfoContent {
     animation: fadeInMobile 0.8s ease forwards;
@@ -824,9 +1050,9 @@
 }
 
 /* Оптимизация для планшетов в портретной ориентации */
-@media (min-width: 768px) and (max-width: 991px) and (orientation: portrait) {
+@media (min-width: 768px) and (max-width: 1023px) and (orientation: portrait) {
   .productSection {
-    height: auto;
+    height: 100dvh;
   }
   
   .productInfoOverlay {
@@ -841,6 +1067,180 @@
 } 
 @media (max-width: 576px) {
   .productSection {
-    height: auto;
+    height: 100dvh;
   }
 }
+
+/* Стили для слайдера */
+.sliderContainer {
+  position: relative;
+  height: 100vh;
+  
+  @media (max-width: 1024px) {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    touch-action: pan-y;
+    cursor: grab;
+    
+    &:active {
+      cursor: grabbing;
+    }
+  }
+}
+
+.sliderArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 300;
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  
+  @media (max-width: 1024px) {
+    display: none;
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    border-top: 2px solid currentColor;
+    border-right: 2px solid currentColor;
+    transition: all 0.3s ease;
+  }
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: translateY(-50%) scale(1.05);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    
+    &::before {
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+  }
+  
+  &:active {
+    transform: translateY(-50%) scale(0.98);
+    transition: all 0.1s ease;
+  }
+}
+
+.sliderArrowLeft {
+  left: 2rem;
+  
+  @media (max-width: 768px) {
+    left: 1.5rem;
+  }
+  
+  @media (max-width: 576px) {
+    left: 1rem;
+  }
+  
+  &::before {
+    transform: translate(-50%, -50%) rotate(-135deg);
+  }
+  
+  &:hover::before {
+    transform: translate(-50%, -50%) rotate(-135deg) scale(1.1);
+  }
+}
+
+.sliderArrowRight {
+  right: 2rem;
+  
+  @media (max-width: 768px) {
+    right: 1.5rem;
+  }
+  
+  @media (max-width: 576px) {
+    right: 1rem;
+  }
+  
+  &::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+  
+  &:hover::before {
+    transform: translate(-50%, -50%) rotate(45deg) scale(1.1);
+  }
+}
+
+.sliderDots {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.75rem;
+  z-index: 100;
+  
+  @media (max-width: 1024px) {
+    bottom: 1.5rem;
+    gap: 0.6rem;
+  }
+  
+  @media (max-width: 768px) {
+    bottom: 1.25rem;
+    gap: 0.6rem;
+  }
+  
+  @media (max-width: 576px) {
+    bottom: 1rem;
+    gap: 0.5rem;
+  }
+}
+
+.sliderDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  @media (max-width: 576px) {
+    width: 10px;
+    height: 10px;
+  }
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.7);
+    transform: scale(1.2);
+    
+    @media (max-width: 576px) {
+      transform: scale(1.1);
+    }
+  }
+}
+
+.sliderDotActive {
+  background: white;
+  border-color: white;
+  transform: scale(1.3);
+  
+  @media (max-width: 576px) {
+    transform: scale(1.2);
+  }
+}
+

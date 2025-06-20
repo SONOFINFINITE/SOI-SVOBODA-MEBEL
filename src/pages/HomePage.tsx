@@ -7,6 +7,7 @@ import { HandCrafted } from '../components/HandCrafted/hand-crafted';
 import KraabGippsInfo from '../components/Txtonpic/KraabGippsInfo';
 import { Faq } from '../components/faq/faq';
 import { Footer } from '../components/Footer/footer';
+import PhoneButton from '../components/PhoneButton/phone-button';
 import styles from './HomePage.module.scss';
 
 const HomePage: React.FC = () => {
@@ -38,7 +39,6 @@ const HomePage: React.FC = () => {
       {/* Загрузочный экран */}
       <div className={styles.loaderContainer}>
         <div className={styles.loader}>
-          <span className={styles.loaderText}>Главная</span>
           <div className={styles.loaderBar}></div>
         </div>
       </div>
@@ -51,6 +51,7 @@ const HomePage: React.FC = () => {
         <KraabGippsInfo />
         <Faq />
         <Footer />
+        <PhoneButton />
       </div>
     </>
   );

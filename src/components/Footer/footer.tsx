@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './footer.module.scss';
 
 export interface FooterProps {
@@ -9,11 +9,17 @@ export interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ className }) => {
     const location = useLocation();
-    const isCatalogPage = location.pathname.includes('/catalog');
+    const navigate = useNavigate();
+    const isCatalogPage = location.pathname.includes('/catalog') || 
+                         (location.pathname.includes('/collections') && location.pathname !== '/collections');
     
     const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
         e.preventDefault();
-        document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
+        if (isCatalogPage) {
+            navigate('/', { state: { scrollToId: id.replace('#', '') } });
+        } else {
+            document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
+        }
     };
     
     return (
@@ -90,7 +96,7 @@ export const Footer: React.FC<FooterProps> = ({ className }) => {
                     <a href="#hc" className={styles.footer__bottom_link} onClick={(e) => handleSmoothScroll(e, '#hc')}>Производство</a>
                     <a href="#textonpic" className={styles.footer__bottom_link} onClick={(e) => handleSmoothScroll(e, '#textonpic')}>Экологичность</a>
                     <a href="#faq" className={styles.footer__bottom_link} onClick={(e) => handleSmoothScroll(e, '#faq')}>FAQ</a>
-                    <a href="/catalog" className={styles.footer__bottom_link}>Каталог</a> 
+                    <a href="/collections" className={styles.footer__bottom_link}>Коллекции</a> 
                     
                 </div>
             </div>

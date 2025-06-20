@@ -1,0 +1,615 @@
+@use '../styles/variables.scss' as *;
+
+// Анимации появления
+.fadeInUp {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+.fadeInLeft {
+  opacity: 0;
+  transform: translateX(-30px);
+  animation: fadeInLeft 0.8s ease forwards;
+}
+
+.fadeInRight {
+  opacity: 0;
+  transform: translateX(30px);
+  animation: fadeInRight 0.8s ease forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.collectionsPage {
+  min-height: 100vh;
+  background-color: #1a1a1a;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif !important;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  
+  &.loaded {
+    opacity: 1;
+  }
+}
+
+.collectionsContainer {
+  display: flex;
+  min-height: 100vh;
+  
+  @media (max-width: 1024px) {
+    flex-direction: column;
+  }
+}
+
+// Превью коллекции слева
+.collectionPreview {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  
+  @media (max-width: 1024px) {
+    min-height: 65vh;
+  }
+  
+  @media (max-width: 768px) {
+    min-height: 60vh;
+  }
+  
+  @media (max-width: 480px) {
+    min-height: 55vh;
+  }
+}
+
+.previewBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: all 0.8s ease;
+}
+
+.previewOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.6) 50%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3rem;
+  
+  @media (max-width: 768px) {
+    padding: 2rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1.5rem;
+  }
+}
+
+.previewContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+// Журнальный дизайн
+.magazineLayout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.collectionNumber {
+  font-size: 8rem;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.3);
+  line-height: 0.8;
+  font-family: 'Inter', sans-serif;
+  align-self: flex-start;
+  margin-bottom: auto;
+  
+  @media (max-width: 1024px) {
+    font-size: 6rem;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 4rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 3rem;
+  }
+  
+  @media (max-width: 375px) {
+    font-size: 2.5rem;
+  }
+}
+
+.collectionInfo {
+  margin-top: auto;
+}
+
+.previewTitle {
+  margin-bottom: 1.5rem;
+  
+  @media (max-width: 768px) {
+    text-align: left;
+    margin-bottom: 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 0.75rem;
+  }
+}
+
+.titleMain {
+  display: block;
+  font-size: 4rem;
+  font-weight: 900;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+  
+  @media (max-width: 1024px) {
+    font-size: 3rem;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  @media (max-width: 375px) {
+    font-size: 1.75rem;
+  }
+}
+
+.titleSub {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: 'Inter', sans-serif;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    letter-spacing: 1px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+  }
+  
+  @media (max-width: 375px) {
+    font-size: 0.8rem;
+  }
+}
+
+.descriptionWrapper {
+  border-left: 2px solid rgba(255, 255, 255, 0.3);
+  padding-left: 1.5rem;
+  margin-left: 1rem;
+  
+  @media (max-width: 768px) {
+    border-left: none;
+    border-top: 2px solid rgba(255, 255, 255, 0.3);
+    padding-left: 0;
+    padding-top: 1rem;
+    margin-left: 0;
+    margin-top: 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
+  }
+}
+
+.previewDescription {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1.5rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  font-weight: 300;
+  max-width: 500px;
+  font-family: 'Inter', sans-serif;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    max-width: none;
+    line-height: 1.6;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+  }
+  
+  @media (max-width: 375px) {
+    font-size: 0.85rem;
+  }
+}
+
+.collectionMeta {
+  display: flex;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Inter', sans-serif;
+  
+  @media (max-width: 768px) {
+    justify-content: flex-start;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.8rem;
+  }
+  
+  @media (max-width: 375px) {
+    font-size: 0.75rem;
+  }
+}
+
+.collectionYear {
+  position: relative;
+  font-family: 'Inter', sans-serif;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+// Меню коллекций справа
+.collectionsMenu {
+  flex: 0 0 45%;
+  padding: 3rem;
+  background-color: #1a1a1a;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  
+  @media (max-width: 1024px) {
+    flex: none;
+    padding: 2rem;
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 1.5rem 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1rem;
+  }
+}
+
+.menuHeader {
+  margin-bottom: 3rem;
+  
+  @media (max-width: 1024px) {
+    margin-bottom: 2rem;
+  }
+  
+  @media (max-width: 768px) {
+    margin-bottom: 1.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 1rem;
+  }
+}
+
+.menuTitle {
+  font-size: 3.5rem;
+  font-weight: 900;
+  margin-bottom: 1rem;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  
+  @media (max-width: 1024px) {
+    font-size: 2.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.5rem;
+  }
+  
+  @media (max-width: 375px) {
+    font-size: 1.25rem;
+  }
+}
+
+.menuSubtitle {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+  }
+  
+  @media (max-width: 375px) {
+    font-size: 0.85rem;
+  }
+}
+
+.menuNav {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+  
+  @media (max-width: 1024px) {
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 0.75rem;
+    padding-bottom: 0.5rem;
+    
+    // Скрываем полосу прокрутки
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    gap: 0.5rem;
+  }
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  font-weight: 900;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+  
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateX(-10px);
+    
+    &::before {
+      left: 100%;
+    }
+    
+    @media (max-width: 1024px) {
+      transform: none;
+    }
+  }
+  
+  @media (max-width: 1024px) {
+    flex-shrink: 0;
+    min-width: 180px;
+    max-height: fit-content;
+    padding: 1.5rem 1.25rem;
+    flex-direction: row;
+    text-align: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    min-width: 150px;
+    max-height: fit-content;
+    padding: 1.25rem 1rem;
+    border-radius: 12px;
+  }
+  
+  @media (max-width: 480px) {
+    min-width: 120px;
+    max-height: fit-content;
+    padding: 1rem 0.75rem;
+    border-radius: 10px;
+  }
+  
+  @media (max-width: 375px) {
+    min-width: 100px;
+    max-height: fit-content;
+    padding: 0.75rem 0.5rem;
+  }
+}
+
+.menuItemActive {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateX(-10px);
+  
+  .menuItemArrow {
+    color: white;
+    transform: translateX(5px);
+  }
+  
+  @media (max-width: 1024px) {
+    transform: none;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.5);
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #fff, rgba(255, 255, 255, 0.7));
+      animation: progressBar 3s linear infinite;
+    }
+    
+    .menuItemArrow {
+      transform: none;
+    }
+  }
+}
+
+.menuItemContent {
+  flex: 1;
+  
+  @media (max-width: 1024px) {
+    text-align: center;
+  }
+}
+
+.menuItemTitle {
+  font-size: 3rem;
+  font-weight: 900;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  
+  @media (max-width: 1024px) {
+    font-size: 1.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 1.25rem;
+    letter-spacing: 0.5px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1rem;
+  }
+  
+  @media (max-width: 375px) {
+    font-size: 0.9rem;
+  }
+}
+
+.menuItemArrow {
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.4);
+  transition: all 0.3s ease;
+  margin-left: 1.5rem;
+  font-family: 'Inter', sans-serif;
+  
+  @media (max-width: 1024px) {
+    margin-left: 0;
+    margin-top: 0.25rem;
+    font-size: 1.25rem;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+  }
+}
+
+.menuFooter {
+  margin-top: 2rem;
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.menuFooterText {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+// Анимация прогресс-бара для автослайдера
+@keyframes progressBar {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+} 
