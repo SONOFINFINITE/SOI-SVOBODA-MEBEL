@@ -293,14 +293,15 @@
   
   @media (max-width: 1024px) {
     position: relative;
-    height: 60dvh;
+    height: 50dvh;
     flex-shrink: 0;
   }
   
   @media (max-width: 576px) {
     position: relative;
-    height: 55dvh;
+    height: 45dvh;
     flex-shrink: 0;
+    min-height: 250px;
   }
   
   &::before {
@@ -352,26 +353,35 @@
   
   @media (max-width: 1024px) {
     position: relative;
-    height: 40dvh;
+    min-height: 50dvh;
+    height: auto;
     padding: 0;
     margin-top: 0;
     flex: 1;
     overflow-y: auto;
+    align-items: flex-start;
+    display: flex;
   }
   
   @media (max-width: 768px) {
     padding: 0;
     margin-top: 0;
-    height: 45dvh;
+    min-height: 50dvh;
+    height: auto;
+    align-items: flex-start;
+    display: flex;
   }
   
   @media (max-width: 576px) {
     position: relative;
-    height: 45dvh;
+    min-height: 55dvh;
+    height: auto;
     padding: 0;
     margin-top: 0;
     flex: 1;
     overflow-y: auto;
+    align-items: flex-start;
+    display: flex;
   }
 }
 
@@ -457,7 +467,8 @@
     border-radius: 0;
     margin: 0;
     background: #1a1a1a;
-    height: 100%;
+    min-height: 100%;
+    height: auto;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -465,6 +476,8 @@
     opacity: 1;
     transform: translateY(0);
     animation: fadeInTablet 0.5s ease-out;
+    overflow-y: auto;
+    max-height: 100%;
   }
   
   @media (max-width: 768px) {
@@ -473,20 +486,52 @@
     padding: 1.25rem;
     border-radius: 0;
     background: #1a1a1a;
-    height: 100%;
+    min-height: 100%;
+    height: auto;
+    overflow-y: auto;
+    max-height: 100%;
   }
   
   @media (max-width: 576px) {
     width: 100%;
-    padding: 1.25rem;
+    padding: 1rem;
     border-radius: 0;
     background: #1a1a1a;
-    height: 100%;
+    min-height: 100%;
+    height: auto;
     overflow-y: auto;
+    max-height: 55dvh;
+    box-sizing: border-box;
   }
   
   @media (max-width: 375px) {
     padding: 0.9rem;
+    max-height: 55dvh;
+  }
+  
+  // Стили для скроллбара на мобильных
+  @media (max-width: 1024px) {
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 2px;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.5);
+      }
+    }
+    
+    // Для Firefox
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1);
   }
 }
 
@@ -571,21 +616,30 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  flex: 1;
   
   @media (max-width: 1024px) {
     gap: 1.5rem;
+    flex: 1;
+    min-height: 0;
   }
   
   @media (max-width: 768px) {
     gap: 1.5rem;
+    flex: 1;
+    min-height: 0;
   }
   
   @media (max-width: 576px) {
-    gap: 1.25rem;
+    gap: 1rem;
+    flex: 1;
+    min-height: 0;
   }
   
   @media (max-width: 375px) {
     gap: 0.75rem;
+    flex: 1;
+    min-height: 0;
   }
 }
 
@@ -739,12 +793,14 @@
     font-size: 1rem;
     align-self: center;
     margin-top: 1rem;
+    flex-shrink: 0;
   }
   
   @media (max-width: 768px) {
     padding: 0.8rem 1.6rem;
     font-size: 0.95rem;
     align-self: center;
+    flex-shrink: 0;
   }
   
   @media (max-width: 576px) {
@@ -753,6 +809,9 @@
     align-self: stretch;
     text-align: center;
     letter-spacing: 0.5px;
+    flex-shrink: 0;
+    margin-top: auto;
+    margin-bottom: 0.5rem;
   }
   
   &:hover {
