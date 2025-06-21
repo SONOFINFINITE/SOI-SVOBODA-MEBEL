@@ -302,18 +302,27 @@
   @media (max-width: 1024px) {
     position: relative;
     flex: 1;
-    min-height: 50dvh;
+    min-height: 45dvh;
   }
   
   @media (max-width: 768px) {
     flex: 1;
-    min-height: 50dvh;
+    min-height: 45dvh;
   }
   
   @media (max-width: 576px) {
     position: relative;
     flex: 1;
-    min-height: 45dvh;
+    min-height: 40dvh;
+  }
+  
+  // Специальные настройки для iPhone 12 Pro и подобных устройств
+  @media (max-width: 414px) and (min-width: 375px) {
+    min-height: 35dvh;
+  }
+  
+  @media (max-width: 375px) {
+    min-height: 35dvh;
   }
   
   &::before {
@@ -478,7 +487,7 @@
     margin: 0;
     background: #1a1a1a;
     height: auto;
-    max-height: 50dvh;
+    max-height: 55dvh;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -496,7 +505,7 @@
     border-radius: 0;
     background: #1a1a1a;
     height: auto;
-    max-height: 50dvh;
+    max-height: 55dvh;
     overflow-y: auto;
   }
   
@@ -506,14 +515,20 @@
     border-radius: 0;
     background: #1a1a1a;
     height: auto;
-    max-height: 45dvh;
+    max-height: 60dvh;
     overflow-y: auto;
     box-sizing: border-box;
   }
   
+  // Специальные настройки для iPhone 12 Pro и подобных устройств
+  @media (max-width: 414px) and (min-width: 375px) {
+    max-height: 65dvh;
+    padding: 1rem;
+  }
+  
   @media (max-width: 375px) {
     padding: 0.9rem;
-    max-height: 55dvh;
+    max-height: 65dvh;
   }
   
   // Стили для скроллбара на мобильных
@@ -672,6 +687,13 @@
     font-size: 1rem;
     margin-bottom: 0.75rem;
     line-height: 1.5;
+  }
+  
+  // Специальные настройки для iPhone 12 Pro и подобных устройств
+  @media (max-width: 414px) and (min-width: 375px) {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin-bottom: 0.6rem;
   }
   
   @media (max-width: 375px) {
