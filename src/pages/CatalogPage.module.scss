@@ -269,15 +269,23 @@
   
   @media (max-width: 1024px) {
     position: relative;
-   
+    height: 100dvh;
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+  }
+  
+  @media (max-width: 768px) {
+    height: 100dvh;
+    min-height: 100dvh;
   }
   
   @media (max-width: 576px) {
     position: relative;
-    min-height: 100dvh;  
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
   }
 }
 
@@ -293,15 +301,19 @@
   
   @media (max-width: 1024px) {
     position: relative;
-    height: 50dvh;
-    flex-shrink: 0;
+    flex: 1;
+    min-height: 50dvh;
+  }
+  
+  @media (max-width: 768px) {
+    flex: 1;
+    min-height: 50dvh;
   }
   
   @media (max-width: 576px) {
     position: relative;
-    height: 45dvh;
-    flex-shrink: 0;
-    min-height: 250px;
+    flex: 1;
+    min-height: 45dvh;
   }
   
   &::before {
@@ -353,11 +365,10 @@
   
   @media (max-width: 1024px) {
     position: relative;
-    min-height: 50dvh;
     height: auto;
     padding: 0;
     margin-top: 0;
-    flex: 1;
+    flex: 0 0 auto;
     overflow-y: auto;
     align-items: flex-start;
     display: flex;
@@ -366,19 +377,18 @@
   @media (max-width: 768px) {
     padding: 0;
     margin-top: 0;
-    min-height: 50dvh;
     height: auto;
+    flex: 0 0 auto;
     align-items: flex-start;
     display: flex;
   }
   
   @media (max-width: 576px) {
     position: relative;
-    min-height: 55dvh;
     height: auto;
     padding: 0;
     margin-top: 0;
-    flex: 1;
+    flex: 0 0 auto;
     overflow-y: auto;
     align-items: flex-start;
     display: flex;
@@ -467,8 +477,8 @@
     border-radius: 0;
     margin: 0;
     background: #1a1a1a;
-    min-height: 100%;
     height: auto;
+    max-height: 50dvh;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -477,7 +487,6 @@
     transform: translateY(0);
     animation: fadeInTablet 0.5s ease-out;
     overflow-y: auto;
-    max-height: 100%;
   }
   
   @media (max-width: 768px) {
@@ -486,10 +495,9 @@
     padding: 1.25rem;
     border-radius: 0;
     background: #1a1a1a;
-    min-height: 100%;
     height: auto;
+    max-height: 50dvh;
     overflow-y: auto;
-    max-height: 100%;
   }
   
   @media (max-width: 576px) {
@@ -497,10 +505,9 @@
     padding: 1rem;
     border-radius: 0;
     background: #1a1a1a;
-    min-height: 100%;
     height: auto;
+    max-height: 45dvh;
     overflow-y: auto;
-    max-height: 55dvh;
     box-sizing: border-box;
   }
   
@@ -1110,7 +1117,7 @@
 /* Оптимизация для планшетов в портретной ориентации */
 @media (min-width: 768px) and (max-width: 1023px) and (orientation: portrait) {
   .productSection {
-    height: 100dvh;
+    height: auto;
   }
   
   .productInfoOverlay {
@@ -1140,10 +1147,22 @@
     overflow: hidden;
     touch-action: pan-y;
     cursor: grab;
+    display: flex;
+    flex-direction: column;
     
     &:active {
       cursor: grabbing;
     }
+  }
+  
+  @media (max-width: 768px) {
+    height: 100dvh;
+    min-height: 100dvh;
+  }
+  
+  @media (max-width: 576px) {
+    height: 100dvh;
+    min-height: 100dvh;
   }
 }
 

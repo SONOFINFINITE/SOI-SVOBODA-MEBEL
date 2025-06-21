@@ -98,8 +98,8 @@ const Hero: React.FC = () => {
                 <p className={styles.hero__subtitle}>{slide.subtitle}</p>
                 
               </div>
-              <Link to="/catalog" className={styles.hero__cta}>
-                  <span>В КАТАЛОГ</span>
+              <Link to="/collections" className={styles.hero__cta}>
+                  <span>КОЛЛЕКЦИИ</span>
                   <svg 
                     width="20" 
                     height="20" 
