@@ -33,10 +33,10 @@ const CatalogPage: React.FC = () => {
   }, [collectionId, collectionName, currentCollectionId, navigate]);
 
   const [activeProduct, setActiveProduct] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const sectionsRef = useRef<HTMLDivElement>(null);
   const productRefs = useRef<(HTMLDivElement | null)[]>([]);
   const autoPlayRef = useRef<number | null>(null);
+  const lastInteractionRef = useRef<number>(Date.now());
   
   // Touch/Swipe состояния
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -46,27 +46,22 @@ const CatalogPage: React.FC = () => {
 
   const nextSlide = () => {
     setActiveProduct((prev) => (prev + 1) % filteredProducts.length);
+    lastInteractionRef.current = Date.now();
   };
 
   const prevSlide = () => {
     setActiveProduct((prev) => (prev - 1 + filteredProducts.length) % filteredProducts.length);
-    // Временно останавливаем автопроигрывание, затем возобновляем через 10 секунд
-    setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 10000);
+    lastInteractionRef.current = Date.now();
   };
 
   const goToSlide = (index: number) => {
     setActiveProduct(index);
-    // Временно останавливаем автопроигрывание, затем возобновляем через 10 секунд
-    setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 10000);
+    lastInteractionRef.current = Date.now();
   };
 
   const handleNextSlide = () => {
     nextSlide();
-    // Временно останавливаем автопроигрывание, затем возобновляем через 10 секунд
-    setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 10000);
+    lastInteractionRef.current = Date.now();
   };
 
   // Минимальная дистанция свайпа для срабатывания
@@ -77,7 +72,6 @@ const CatalogPage: React.FC = () => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
     setIsDragging(false);
-    setIsAutoPlaying(false);
   };
 
   const onTouchMove = (e: React.TouchEvent) => {
@@ -115,9 +109,6 @@ const CatalogPage: React.FC = () => {
     setTouchStart(null);
     setTouchEnd(null);
     setIsDragging(false);
-    
-    // Возобновляем автопроигрывание через 10 секунд
-    setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
   // Обработчики mouse-событий для десктопа (drag)
@@ -127,7 +118,6 @@ const CatalogPage: React.FC = () => {
     setTouchEnd(null);
     setTouchStart(e.clientX);
     setIsDragging(false);
-    setIsAutoPlaying(false);
   };
 
   const onMouseMove = (e: React.MouseEvent) => {
@@ -160,8 +150,6 @@ const CatalogPage: React.FC = () => {
     setTouchStart(null);
     setTouchEnd(null);
     setIsDragging(false);
-    
-    setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
   // Сброс активного слайда при смене коллекции
@@ -189,18 +177,27 @@ const CatalogPage: React.FC = () => {
     }
   }, [filteredProducts, activeProduct]);
 
-  // Автопроигрывание слайдов
+  // Автопроигрывание слайдов каждые 8 секунд
   useEffect(() => {
-    if (isAutoPlaying) {
-      autoPlayRef.current = window.setInterval(() => {
-        nextSlide();
-      }, 5000);
-    } else {
-      if (autoPlayRef.current) {
-        clearInterval(autoPlayRef.current);
-        autoPlayRef.current = null;
-      }
+    if (filteredProducts.length <= 1) return;
+
+    // Очищаем предыдущий таймер
+    if (autoPlayRef.current) {
+      clearInterval(autoPlayRef.current);
     }
+    
+    // Устанавливаем новый таймер
+    autoPlayRef.current = window.setInterval(() => {
+      const timeSinceLastInteraction = Date.now() - lastInteractionRef.current;
+      // Если прошло 8 секунд с последнего взаимодействия, переключаем слайд
+      if (timeSinceLastInteraction >= 8000) {
+        setActiveProduct((prev) => {
+          const next = (prev + 1) % filteredProducts.length;
+          lastInteractionRef.current = Date.now();
+          return next;
+        });
+      }
+    }, 1000); // Проверяем каждую секунду
 
     return () => {
       if (autoPlayRef.current) {
@@ -208,7 +205,7 @@ const CatalogPage: React.FC = () => {
         autoPlayRef.current = null;
       }
     };
-  }, [isAutoPlaying, filteredProducts.length]);
+  }, [filteredProducts.length]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -286,9 +283,8 @@ const CatalogPage: React.FC = () => {
         <Header />
         <div 
           className={styles.sliderContainer}
-          onMouseEnter={() => setIsAutoPlaying(false)}
+          onMouseEnter={() => {}}
           onMouseLeave={() => {
-            setIsAutoPlaying(true);
             onMouseUp();
           }}
           onTouchStart={onTouchStart}
