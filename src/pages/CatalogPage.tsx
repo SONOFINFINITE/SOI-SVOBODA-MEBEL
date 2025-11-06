@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Header from '../components/Header/Header';
@@ -13,14 +13,24 @@ gsap.registerPlugin(ScrollTrigger);
 const CatalogPage: React.FC = () => {
 const { collectionId, collectionName } = useParams<{ collectionId?: string; collectionName?: string }>();
 const navigate = useNavigate();
+const [searchParams] = useSearchParams();
 // Определяем текущую коллекцию
 const currentCollectionId = collectionName ? getCollectionIdFromName(collectionName) : collectionId;
-// Фильтруем товары по коллекции, если указана - используем useMemo для предотвращения пересоздания массива
+// Получаем категорию из URL параметров
+const categoryParam = searchParams.get('category');
+// Фильтруем товары по коллекции и категории - используем useMemo для предотвращения пересоздания массива
 const filteredProducts = useMemo(() => {
-  return currentCollectionId
+  let filtered = currentCollectionId
     ? products.filter(product => product.collection === currentCollectionId)
     : products;
-}, [currentCollectionId]);
+  
+  // Если указана категория, фильтруем по ней
+  if (categoryParam && categoryParam !== 'all') {
+    filtered = filtered.filter(product => product.category === categoryParam);
+  }
+  
+  return filtered;
+}, [currentCollectionId, categoryParam]);
 // Если коллекция не найдена, перенаправляем на страницу коллекций
 useEffect(() => {
 if (collectionName && !currentCollectionId) {
@@ -60,6 +70,8 @@ const goToSlide = (index: number) => {
 setActiveProduct(index);
 lastInteractionRef.current = Date.now();
 };
+
+
 const handleNextSlide = () => {
 nextSlide();
 lastInteractionRef.current = Date.now();
@@ -426,11 +438,15 @@ handleNextSlide();
             
             <div className={`${styles.productInfoOverlay} ${activeProduct % 2 === 0 ? styles.infoLeft : styles.infoRight}`}>
               <div className={styles.productInfoContent} onClick={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onTouchEnd={(e) => e.stopPropagation()}>
+                {filteredProducts[activeProduct].article && (
+                  <div className={styles.productArticle}>
+                    Артикул: {filteredProducts[activeProduct].article}
+                  </div>
+                )}
                 <h2 className={styles.productName}>{filteredProducts[activeProduct].name}</h2>
                 <p className={styles.productPrice}>{filteredProducts[activeProduct].price}</p>
                 
                 <div className={styles.productDetails}>
-                  <p className={styles.productDescription}>{filteredProducts[activeProduct].description}</p>
                   
                   <div className={styles.productSpecsTable}>
                     <div className={styles.specsRow}>

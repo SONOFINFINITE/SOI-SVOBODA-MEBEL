@@ -1,50 +1,96 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './CollectionsPage.module.scss';
+import { collectionCategories } from '../data/catalog';
+import tumbyIcon from '../assets/tumby_icon.png';
+import komodyIcon from '../assets/komody_icon.png';
+import stolyIcon from '../assets/stoly_icon.png';
+import stulyaIcon from '../assets/stulya_icon.png';
+import konsoliIcon from '../assets/konsoli_icon.png';
+import vitrinyIcon from '../assets/vitriny_icon.png';
+import allIcon from '../assets/all_icon.png';
 
 // Данные о коллекциях
 const collections = [
   {
     id: 'modern-minimalism',
-    name: 'Milano',
-    russianName: 'Современный минимализм',
-    description: 'Лаконичные формы, функциональность и стиль в каждой детали. Мебель для тех, кто ценит простоту и элегантность в интерьере. Чистые линии, натуральные материалы и продуманная эргономика создают атмосферу спокойствия и гармонии в современном доме.',
+    name: 'Bryce',
+    russianName: 'Естественность и элегантность',
+    description: 'Коллекция Bryce с фрезерованными фасадами стала одним из самых модных трендов этого года, который будет сохраняться еще долгое время. Изделия выглядят очень естественно, элегантно и подходят под любой современный стиль.',
     image: '/images/Коллекции/01.webp'
   },
   {
     id: 'french-classics',
-    name: 'Provence',
-    russianName: 'Французская классика',
-    description: 'Элегантная мебель в стиле французского прованса, воплощающая дух старинных усадеб. Натуральные материалы, изысканные формы и неповторимая атмосфера уюта. Каждое изделие хранит тепло ручной работы и традиции мастерства, передаваемые из поколения в поколение.',
+    name: 'Soho',
+    russianName: 'Европейский контемпорари',
+    description: 'Изделия коллекции SOHO отлично впишутся в любой интерьер, так как используемый стиль контемпорари объединяет европейскую элегантность и скандинавскую ясность форм.',
     image: '/images/Коллекции/02.webp'
   },
   {
     id: 'comfort-relax',
-    name: 'Toscana',
-    russianName: 'Комфорт и релакс',
-    description: 'Мебель для истинного отдыха и расслабления, созданная для максимального комфорта. Эргономичные решения, мягкие текстуры и продуманная функциональность помогают создать идеальную зону релакса в вашем доме. Место, где время останавливается.',
+    name: 'Art Deco',
+    russianName: 'Экзотический модерн',
+    description: 'Стиль, возникший в Европе и США в начале XX века, объединяющий элементы модерна, классики и экзотики. Он славится: геометрическими формами, богатыми декоративными деталями, использованием дорогих материалов, элегантностью и симметрией.',
     image: '/images/Коллекции/03.webp'
   },
   {
     id: 'industrial-loft',
-    name: 'Berlin',
-    russianName: 'Индустриальный лофт',
-    description: 'Брутальная красота промышленной эстетики, адаптированная для современного дома. Металл, дерево и бетон в идеальной гармонии. Мебель для тех, кто не боится экспериментировать и ценит характер в каждой детали интерьера.',
+    name: 'Sydney',
+    russianName: 'Графитовый лофт',
+    description: 'Коллекция Sydney выполнена из натурального массива дуба. Изделия отличаются интересным сочетанием латунной фурнитуры с темно-графитовым цветом основания, что создает благородный и при этом современный стильный дизайн.',
     image: '/images/Коллекции/04.webp'
   },
   {
     id: 'scandinavian-hygge',
-    name: 'Stockholm',
-    russianName: 'Скандинавский хюгге',
-    description: 'Философия северного уюта, воплощённая в мебели. Светлые тона, натуральные текстуры и максимальная функциональность. Создайте атмосферу тепла и спокойствия, где каждый предмет дарит ощущение домашнего комфорта и гармонии с природой.',
+    name: 'Gven',
+    russianName: 'Минимализм и долговечность',
+    description: 'Стиль минимализм и натуральное дерево идеально гармонируют в Коллекции Gven. Использование МДФ и шпона дуба обеспечивает долговечность и эстетическую привлекательность, а ножки из массива дуба добавляют прочности и стабильности.',
     image: '/images/Коллекции/05.webp'
   }
 ];
 
+// Helper function to get category icons
+const getCategoryIcon = (categoryId: string): string => {
+  // Иконки из файлов
+  const imageIcons: { [key: string]: string } = {
+    'tumby': tumbyIcon,
+    'komody': komodyIcon,
+    'stoly': stolyIcon,
+    'stulya': stulyaIcon,
+    'taburety-i-stulya': stulyaIcon, // Для категории табуреты и стулья используем иконку стульев
+    'konsoli': konsoliIcon,
+    'vitriny': vitrinyIcon,
+    'all': allIcon
+  };
+  
+  if (imageIcons[categoryId]) {
+    return imageIcons[categoryId];
+  }
+  
+  // Эмодзи иконки для остальных категорий
+  const emojiIcons: { [key: string]: string } = {
+    'kitchens': '🍳',
+    'wardrobes': '👔',
+    'living-rooms': '🛋️',
+    'bedrooms': '🛏️',
+    'hallways': '🚪',
+    'childrens-rooms': '🧸',
+    'bathrooms': '🛁',
+    'offices': '💼',
+    'dining-rooms': '🍽️',
+    'storage': '📦',
+    'accessories': '✨'
+  };
+  return emojiIcons[categoryId] || '🏠';
+};
+
 const CollectionsPage: React.FC = () => {
   const [selectedCollection, setSelectedCollection] = useState(collections[0]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [isMobile, setIsMobile] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [showCategoryPicker, setShowCategoryPicker] = useState(false);
+  const [showCollectionsMenu, setShowCollectionsMenu] = useState(true);
   const navigate = useNavigate();
 
   // Проверка на мобильное устройство
@@ -70,7 +116,8 @@ const CollectionsPage: React.FC = () => {
 
   // Автоматический слайдер для мобильных устройств
   useEffect(() => {
-    if (!isMobile) return;
+    // Остановить автопереключение если не мобильное устройство или открыто меню категорий
+    if (!isMobile || showCategoryPicker) return;
 
     const interval = setInterval(() => {
       setSelectedCollection(current => {
@@ -81,16 +128,52 @@ const CollectionsPage: React.FC = () => {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [isMobile]);
+  }, [isMobile, showCategoryPicker]);
 
   const handleCollectionSelect = (collection: typeof collections[0]) => {
     setSelectedCollection(collection);
+    setSelectedCategory('');
+    // This function only changes the preview - no animation triggered
   };
 
-  const handleGoToCollection = (collection: typeof collections[0]) => {
+  const handleCollectionClick = (collection: typeof collections[0]) => {
+    setSelectedCollection(collection);
+    setSelectedCategory('');
+    
+    // Trigger animation: hide collections menu and show category picker
+    setShowCollectionsMenu(false);
+    setTimeout(() => {
+      setShowCategoryPicker(true);
+    }, 300); // Wait for fade out animation to complete
+  };
+
+  const handleGoToCollection = (collection: typeof collections[0], category?: string) => {
     // Преобразуем название коллекции в URL-friendly формат
     const collectionName = collection.name.toLowerCase().replace(/\s+/g, '-');
-    navigate(`/collections/${collectionName}`);
+    // Используем переданную категорию или текущую выбранную
+    const categoryToUse = category !== undefined ? category : selectedCategory;
+    // Добавляем категорию в URL, если выбрана не "все"
+    const categoryParam = categoryToUse && categoryToUse !== 'all' ? `?category=${categoryToUse}` : '';
+    console.log('Navigating to:', `/collections/${collectionName}${categoryParam}`, 'Collection:', collection.name, 'Category:', categoryToUse);
+    navigate(`/collections/${collectionName}${categoryParam}`);
+  };
+
+  const handleCategoryChange = (categoryId: string) => {
+    console.log('Category changed to:', categoryId, 'Current collection:', selectedCollection.name);
+    setSelectedCategory(categoryId);
+    
+    // Navigate to catalog with selected category after a short delay for visual feedback
+    setTimeout(() => {
+      handleGoToCollection(selectedCollection, categoryId);
+    }, 200);
+  };
+
+  const handleBackToCollections = () => {
+    // Trigger animation: hide category picker and show collections menu
+    setShowCategoryPicker(false);
+    setTimeout(() => {
+      setShowCollectionsMenu(true);
+    }, 300); // Wait for fade out animation to complete
   };
 
   return (
@@ -128,34 +211,88 @@ const CollectionsPage: React.FC = () => {
 
         {/* Меню коллекций справа */}
         <div className={`${styles.collectionsMenu} ${styles.fadeInRight}`}>
+          {/* Заголовок с названием коллекции */}
           <div className={`${styles.menuHeader} ${styles.fadeInUp}`} style={{ animationDelay: '0.1s' }}>
-            <h1 className={styles.menuTitle}>Коллекции</h1>
-            <p className={styles.menuSubtitle}>Выберите коллекцию для просмотра</p>
+            <div className={styles.headerContent}>
+              <div className={styles.headerText}>
+                <h1 className={styles.menuTitle}>
+                  {showCategoryPicker ? `${selectedCollection.name}` : 'Коллекции'}
+                </h1>
+                <p className={styles.menuSubtitle}>
+                  {showCategoryPicker ? 'Выберите категорию для просмотра' : 'Выберите коллекцию для просмотра'}
+                </p>
+              </div>
+              {showCategoryPicker && (
+                <button
+                  className={`${styles.categoryButton} ${styles.backButton}`}
+                  onClick={handleBackToCollections}
+                >
+                  ← Назад к коллекциям
+                </button>
+              )}
+            </div>
           </div>
           
-          <nav className={styles.menuNav}>
-            {collections.map((collection, index) => (
-              <button
-                key={collection.id}
-                className={`${styles.menuItem} ${styles.fadeInUp} ${selectedCollection.id === collection.id ? styles.menuItemActive : ''}`}
-                style={{ animationDelay: `${0.3 + index * 0.1}s` }}
-                onClick={() => {
-                  handleCollectionSelect(collection);
-                  handleGoToCollection(collection);
-                }}
-                onMouseEnter={() => handleCollectionSelect(collection)}
-              >
-                <div className={styles.menuItemContent}>
-                  <h3 className={styles.menuItemTitle}>{collection.name}</h3>
-                </div>
-                <div className={styles.menuItemArrow}>→</div>
-              </button>
-            ))}
-          </nav>
+          {/* Меню коллекций (анимированное появление/исчезновение) */}
+          {showCollectionsMenu && (
+            <div className={`${styles.collectionsList} ${styles.fadeIn}`}>
+              <nav className={styles.menuNav}>
+                {collections.map((collection, index) => (
+                  <button
+                    key={collection.id}
+                    className={`${styles.menuItem} ${styles.fadeInUp} ${selectedCollection.id === collection.id ? styles.menuItemActive : ''}`}
+                    style={{ animationDelay: `${0.3 + index * 0.1}s` }}
+                    onClick={() => handleCollectionClick(collection)}
+                    onMouseEnter={() => handleCollectionSelect(collection)}
+                  >
+                    <div className={styles.menuItemContent}>
+                      <h3 className={styles.menuItemTitle}>{collection.name}</h3>
+                    </div>
+                    <div className={styles.menuItemArrow}>→</div>
+                  </button>
+                ))}
+              </nav>
+            </div>
+          )}
+          
+          {/* Выбор категории (анимированное появление/исчезновение) */}
+          {showCategoryPicker && (
+            <div className={`${styles.categorySelector} ${styles.fadeIn}`}>
+              <div className={styles.categoryGrid}>
+                <button
+                  className={`${styles.categoryCard} ${selectedCategory === 'all' ? styles.categoryCardActive : ''}`}
+                  onClick={() => handleCategoryChange('all')}
+                >
+                  <div className={styles.categoryIcon}>
+                    <img src={getCategoryIcon('all')} alt="Все категории" style={{width: '100%', height: '100%', objectFit: 'contain'}} />
+                  </div>
+                  <div>Все категории</div>
+                </button>
+                {selectedCollection && collectionCategories[selectedCollection.name.toLowerCase()] && (
+                  collectionCategories[selectedCollection.name.toLowerCase()].map((category) => (
+                    <button
+                      key={category.id}
+                      className={`${styles.categoryCard} ${selectedCategory === category.id ? styles.categoryCardActive : ''}`}
+                      onClick={() => handleCategoryChange(category.id)}
+                    >
+                      <div className={styles.categoryIcon}>
+                        {['tumby', 'komody', 'stoly', 'stulya', 'taburety-i-stulya', 'konsoli', 'vitriny'].includes(category.id) ? (
+                          <img src={getCategoryIcon(category.id)} alt={category.nameRu} style={{width: '100%', height: '100%', objectFit: 'contain'}} />
+                        ) : (
+                          getCategoryIcon(category.id)
+                        )}
+                      </div>
+                      <div>{category.nameRu}</div>
+                    </button>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default CollectionsPage; 
+export default CollectionsPage;
