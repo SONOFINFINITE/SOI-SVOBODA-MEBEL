@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styles from './Header.module.scss';
 import DrawerMenu from '../Drawer/drawer-menu';
+import SVOBODA_LOGO_BLACK from '../../assets/SVOBODA_LOGO_BLACK.png';
+import SVOBODA_LOGO_WHITE from '../../assets/SVOBODA_LOGO_WHITE.png';
 
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -60,7 +62,12 @@ const Header: React.FC = () => {
         <div className={styles.header__center}>
           <div className={styles.header__logo}>
             <Link to="/" className={styles.header__logoLink}>
-              LOGO
+              <img 
+                src={isScrolled ? SVOBODA_LOGO_BLACK : SVOBODA_LOGO_WHITE} 
+                alt="SVOBODA Logo" 
+                style={{ height: '85px', width: 'auto' }}
+                className={styles.header__logoImg}
+              />
             </Link>
           </div>
         </div>
@@ -81,4 +88,4 @@ const Header: React.FC = () => {
   );
 };
 
-export default Header; 
+export default Header;

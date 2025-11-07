@@ -129,6 +129,19 @@
     color: var(--color-text-primary);
 }
 
+.drawer__logoImg {
+    height: 85px;
+    width: auto;
+    
+    @media (max-width: 768px) {
+        height: 48px;
+    }
+    
+    @media (max-width: 480px) {
+        height: 40px;
+    }
+}
+
 .drawer__nav {
     flex: 1;
     display: flex;

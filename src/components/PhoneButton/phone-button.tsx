@@ -25,18 +25,18 @@ interface PhoneButtonProps {
 
 const PhoneButton: React.FC<PhoneButtonProps> = ({ theme = 'dark' }) => {
   const handleClick = () => {
-    window.open('tel:+79999999999', '_self');
+    window.open('tel:+79108237272', '_self');
   };
 
   return (
     <button 
       className={`${styles.phoneButton} ${theme === 'light' ? styles.phoneButtonLight : ''}`} 
       onClick={handleClick}
-      aria-label="Позвонить по номеру +7 999 999 99 99"
+      aria-label="Позвонить по номеру +7 (910) 823-72-72"
     >
       <PhoneIcon />
     </button>
   );
 };
 
-export default PhoneButton; 
+export default PhoneButton;

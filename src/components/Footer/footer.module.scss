@@ -255,6 +255,19 @@
         }
     }
 
+    &__logoImg {
+        height: 85px;
+        width: auto;
+        
+        @media (max-width: 768px) {
+            height: 48px;
+        }
+        
+        @media (max-width: 480px) {
+            height: 40px;
+        }
+    }
+
     &__logoLink {
         text-decoration: none;
     }
