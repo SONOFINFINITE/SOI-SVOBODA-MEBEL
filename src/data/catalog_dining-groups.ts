@@ -12,7 +12,7 @@ export const diningGroupsProducts = [
     collection: 'dining groups',
     category: 'stoly',
     specs: {
-      material: 'массив бука или березы, МДФ эмаль',
+      material: 'массив бука, МДФ эмаль',
       dimensions: '60 x 45 x 52 см',
       weight: '4.5 кг'
     },
