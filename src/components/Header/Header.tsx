@@ -13,6 +13,9 @@ const Header: React.FC = () => {
   // Проверяем, находимся ли мы на странице каталога или коллекций
   const isCatalogPage = location.pathname.includes('/catalog') || 
                        (location.pathname.includes('/collections') && location.pathname !== '/collections');
+  
+  // Проверяем, находимся ли мы на любой странице коллекций (включая /collections/*)
+  const isAnyCollectionsPage = location.pathname.includes('/collections');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,8 +44,14 @@ const Header: React.FC = () => {
   const headerClasses = [
     styles.header,
     isCatalogPage ? (isScrolled ? styles.scrolled : '') : styles.mainPage,
-    !isCatalogPage && isScrolled ? styles.scrolled : ''
+    !isCatalogPage && !isAnyCollectionsPage && isScrolled ? styles.scrolled : '',
+    isAnyCollectionsPage ? styles.collectionsPage : ''
   ].filter(Boolean).join(' ');
+  
+  // Логика выбора логотипа
+  // На всех страницах с /collections (включая /collections/*) логотип всегда белый
+  // На остальных страницах: белый по умолчанию, черный при скролле
+  const logoSrc = (isAnyCollectionsPage || !isScrolled) ? SVOBODA_LOGO_WHITE : SVOBODA_LOGO_BLACK;
 
   return (
     <header className={headerClasses}>
@@ -63,7 +72,7 @@ const Header: React.FC = () => {
           <div className={styles.header__logo}>
             <Link to="/" className={styles.header__logoLink}>
               <img 
-                src={isScrolled ? SVOBODA_LOGO_BLACK : SVOBODA_LOGO_WHITE} 
+                src={logoSrc} 
                 alt="SVOBODA Logo" 
                 style={{ height: '85px', width: 'auto' }}
                 className={styles.header__logoImg}

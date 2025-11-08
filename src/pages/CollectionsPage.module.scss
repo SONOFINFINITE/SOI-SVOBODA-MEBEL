@@ -318,7 +318,7 @@
 // Меню коллекций справа
 .collectionsMenu {
   flex: 0 0 45%;
-  padding: 3rem;
+  padding: 2rem;
   background-color: #1a1a1a;
   border-left: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
@@ -342,7 +342,7 @@
 }
 
 .menuHeader {
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
   
   @media (max-width: 1024px) {
     margin-bottom: 2rem;
@@ -421,7 +421,7 @@
 .menuNav {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
   flex: 1;
   
   @media (max-width: 1024px) {
@@ -450,7 +450,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 2rem;
+  padding: 1.25rem 1.5rem;
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
@@ -587,10 +587,10 @@
 }
 
 .menuItemArrow {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   color: rgba(255, 255, 255, 0.4);
   transition: all 0.3s ease;
-  margin-left: 1.5rem;
+  margin-left: 1rem;
   font-family: 'Inter', sans-serif;
   
   @media (max-width: 1024px) {

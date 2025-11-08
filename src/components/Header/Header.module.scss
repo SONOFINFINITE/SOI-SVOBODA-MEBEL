@@ -44,6 +44,41 @@
     }
   }
   
+  &.collectionsPage {
+    background-color: transparent;
+    border-bottom: none;
+    
+    .header__burgerLine {
+      background-color: #fff;
+    }
+    
+    .header__logoLink {
+      color: #fff;
+    }
+    
+    .header__actionBtn {
+      color: #fff;
+    }
+    
+    &.scrolled {
+      background-color: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      
+      .header__burgerLine {
+        background-color: #fff;
+      }
+      
+      .header__logoLink {
+        color: #fff;
+      }
+      
+      .header__actionBtn {
+        color: #fff;
+      }
+    }
+  }
+  
   &.scrolled {
     background-color: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(10px);
