@@ -5,10 +5,15 @@ export interface ProductSpecs {
   weight: string;
 }
 
+export interface ProductVariant {
+  article: string;
+  material: string;
+  price: string;
+}
+
 export interface Product {
   id: number;
   name: string;
-  description: string;
   price: string;
   image: string;
   images: string[]; // Добавляем массив изображений
@@ -16,6 +21,7 @@ export interface Product {
   category: string;
   specs: ProductSpecs;
   article?: string; // Артикул товара (опциональный)
+  variants?: ProductVariant[]; // Варианты товара
 }
 
 // Интерфейсы для категорий
@@ -68,6 +74,7 @@ import { bryceProducts } from './catalog_bryce';
 import { gvenProducts } from './catalog_gven';
 import { sohoProducts } from './catalog_soho';
 import { sydneyProducts } from './catalog_sydney';
+import { diningGroupsProducts } from './catalog_dining-groups';
 
 // Объединяем все товары в один массив
 export const products: Product[] = [
@@ -75,7 +82,8 @@ export const products: Product[] = [
   ...bryceProducts,
   ...gvenProducts,
   ...sohoProducts,
-  ...sydneyProducts
+  ...sydneyProducts,
+  ...diningGroupsProducts
 ];
 
 // Данные о коллекциях - обновлены для соответствия новой структуре URL
@@ -104,6 +112,11 @@ export const collections: Collections = {
     name: 'Gven',
     russianName: 'минимализм натуральное',
     description: 'Философия северного уюта, воплощённая в мебели'
+  },
+  'dining groups': {
+    name: 'Dining Groups',
+    russianName: 'Столовые группы',
+    description: 'Элегантные столы и стулья для создания уютной столовой зоны'
   }
 };
 
@@ -114,28 +127,46 @@ export const collectionCategories: CollectionCategories = {
     { id: 'komody', name: 'komody', nameRu: 'Комоды' },
     { id: 'stoly', name: 'stoly', nameRu: 'Столы' },
     { id: 'tumby', name: 'tumby', nameRu: 'Тумбы' },
-    { id: 'konsoli', name: 'konsoli', nameRu: 'Консоли' }
+    { id: 'konsoli', name: 'konsoli', nameRu: 'Консоли' },
+    { id: 'zerkala', name: 'zerkala', nameRu: 'Зеркала' },
+    { id: 'krovati', name: 'krovati', nameRu: 'Кровати' },
+    { id: 'stelazhi', name: 'stelazhi', nameRu: 'Стелажи' },
   ],
   'soho': [
     { id: 'stoly', name: 'stoly', nameRu: 'Столы' },
     { id: 'stulya', name: 'stulya', nameRu: 'Стулья' },
     { id: 'komody', name: 'komody', nameRu: 'Комоды' },
-    { id: 'tumby', name: 'tumby', nameRu: 'Тумбы' }
+    { id: 'tumby', name: 'tumby', nameRu: 'Тумбы' },
+    { id: 'zerkala', name: 'zerkala', nameRu: 'Зеркала' },
+    { id: 'banketki', name: 'banketki', nameRu: 'Банкетки' },
+    { id: 'taburety', name: 'taburety', nameRu: 'Табуреты' },
   ],
-  'art deco': [
+  'art-deco': [
     { id: 'stoly', name: 'stoly', nameRu: 'Столы' },
+     { id: 'tumby', name: 'tumby', nameRu: 'Тумбы' },
+     { id: 'konsoli', name: 'konsoli', nameRu: 'Консоли' },
+      { id: 'zerkala', name: 'zerkala', nameRu: 'Зеркала' },
     { id: 'komody', name: 'komody', nameRu: 'Комоды' },
     { id: 'vitriny', name: 'vitriny', nameRu: 'Витрины' }
   ],
   'sydney': [
     { id: 'vitriny', name: 'vitriny', nameRu: 'Витрины' },
     { id: 'komody', name: 'komody', nameRu: 'Комоды' },
+    { id: 'konsoli', name: 'konsoli', nameRu: 'Консоли' },
+      { id: 'krovati', name: 'krovati', nameRu: 'Кровати' },
     { id: 'tumby', name: 'tumby', nameRu: 'Тумбы' }
   ],
   'gven': [
+     { id: 'vitriny', name: 'vitriny', nameRu: 'Витрины' },
     { id: 'komody', name: 'komody', nameRu: 'Комоды' },
+     { id: 'konsoli', name: 'konsoli', nameRu: 'Консоли' },
+         { id: 'zerkala', name: 'zerkala', nameRu: 'Зеркала' },
     { id: 'stoly', name: 'stoly', nameRu: 'Столы' },
     { id: 'tumby', name: 'tumby', nameRu: 'Тумбы' }
+  ],
+  'dining-groups': [
+    { id: 'stoly', name: 'stoly', nameRu: 'Столы' },
+    { id: 'stulya', name: 'stulya', nameRu: 'Стулья' }
   ]
 };
 

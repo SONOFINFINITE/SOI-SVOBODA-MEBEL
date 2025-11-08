@@ -53,21 +53,45 @@ const [touchEnd, setTouchEnd] = useState<number | null>(null);
 const [, setIsDragging] = useState(false);
 const [touchStartedInInfo, setTouchStartedInInfo] = useState(false);
 const [imageLoaded, setImageLoaded] = useState(false);
+// Состояние для выбранного варианта товара
+const [selectedVariant, setSelectedVariant] = useState<number>(0);
 // Мемоизируем список изображений для текущего товара, чтобы избежать лишних пересчетов при рендере
 const currentProductImages = useMemo(() => {
 if (!filteredProducts[activeProduct]) return [];
 return getProductImages(filteredProducts[activeProduct]);
 }, [activeProduct, filteredProducts]);
+
+// Получаем актуальный артикул и цену на основе выбранного варианта
+const currentArticle = useMemo(() => {
+  const product = filteredProducts[activeProduct];
+  if (!product) return '';
+  if (product.variants && product.variants.length > 0) {
+    return product.variants[selectedVariant]?.article || product.article || '';
+  }
+  return product.article || '';
+}, [activeProduct, selectedVariant, filteredProducts]);
+
+const currentPrice = useMemo(() => {
+  const product = filteredProducts[activeProduct];
+  if (!product) return '';
+  if (product.variants && product.variants.length > 0) {
+    return product.variants[selectedVariant]?.price || product.price;
+  }
+  return product.price;
+}, [activeProduct, selectedVariant, filteredProducts]);
 const nextSlide = () => {
 setActiveProduct((prev) => (prev + 1) % filteredProducts.length);
+setSelectedVariant(0); // Сброс варианта при смене товара
 lastInteractionRef.current = Date.now();
 };
 const prevSlide = () => {
 setActiveProduct((prev) => (prev - 1 + filteredProducts.length) % filteredProducts.length);
+setSelectedVariant(0); // Сброс варианта при смене товара
 lastInteractionRef.current = Date.now();
 };
 const goToSlide = (index: number) => {
 setActiveProduct(index);
+setSelectedVariant(0); // Сброс варианта при смене товара
 lastInteractionRef.current = Date.now();
 };
 
@@ -173,6 +197,7 @@ setIsDragging(false);
 // Сброс активного слайда при смене коллекции
 useEffect(() => {
 setActiveProduct(0);
+setSelectedVariant(0);
 }, [currentCollectionId]);
 // Сброс состояния загрузки при смене слайда
 useEffect(() => {
@@ -407,7 +432,7 @@ handleNextSlide();
         >
           <div className={styles.productFullscreenWrapper}>
             <div 
-              className={styles.productBackground} 
+              className={`${styles.productBackground} ${filteredProducts[activeProduct].collection === 'dining groups' ? styles.productBackgroundDiningGroups : ''}`}
               style={{ backgroundImage: `url(${filteredProducts[activeProduct].image})` }}
               onClick={handleBackgroundClick}
               role="button"
@@ -438,29 +463,57 @@ handleNextSlide();
             
             <div className={`${styles.productInfoOverlay} ${activeProduct % 2 === 0 ? styles.infoLeft : styles.infoRight}`}>
               <div className={styles.productInfoContent} onClick={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onTouchEnd={(e) => e.stopPropagation()}>
-                {filteredProducts[activeProduct].article && (
+                {currentArticle && (
                   <div className={styles.productArticle}>
-                    Артикул: {filteredProducts[activeProduct].article}
+                    Артикул: {currentArticle}
                   </div>
                 )}
                 <h2 className={styles.productName}>{filteredProducts[activeProduct].name}</h2>
-                <p className={styles.productPrice}>{filteredProducts[activeProduct].price}</p>
+                <p className={styles.productPrice}>{currentPrice}</p>
+                
+                {/* Переключатель вариантов */}
+                {filteredProducts[activeProduct].variants && filteredProducts[activeProduct].variants!.length > 1 && (
+                  <div className={styles.variantSelector}>
+                    {filteredProducts[activeProduct].variants!.map((variant, index) => (
+                      <button
+                        key={index}
+                        className={`${styles.variantButton} ${index === selectedVariant ? styles.variantButtonActive : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedVariant(index);
+                        }}
+                      >
+                        {variant.material}
+                      </button>
+                    ))}
+                  </div>
+                )}
                 
                 <div className={styles.productDetails}>
                   
                   <div className={styles.productSpecsTable}>
-                    <div className={styles.specsRow}>
-                      <div className={styles.specsLabel}>Материал</div>
-                      <div className={styles.specsValue}>{filteredProducts[activeProduct].specs.material}</div>
-                    </div>
-                    <div className={styles.specsRow}>
-                      <div className={styles.specsLabel}>Размеры</div>
-                      <div className={styles.specsValue}>{filteredProducts[activeProduct].specs.dimensions}</div>
-                    </div>
-                    <div className={styles.specsRow}>
-                      <div className={styles.specsLabel}>Вес</div>
-                      <div className={styles.specsValue}>{filteredProducts[activeProduct].specs.weight}</div>
-                    </div>
+                    {filteredProducts[activeProduct].specs.material && 
+                     filteredProducts[activeProduct].specs.material.toLowerCase() !== 'не указан' && (
+                      <div className={styles.specsRow}>
+                        <div className={styles.specsLabel}>Материал</div>
+                        <div className={styles.specsValue}>{filteredProducts[activeProduct].specs.material}</div>
+                      </div>
+                    )}
+                    {filteredProducts[activeProduct].specs.dimensions && 
+                     filteredProducts[activeProduct].specs.dimensions.toLowerCase() !== 'не указан' && 
+                     filteredProducts[activeProduct].specs.dimensions.toLowerCase() !== 'не указаны' && (
+                      <div className={styles.specsRow}>
+                        <div className={styles.specsLabel}>Размеры</div>
+                        <div className={styles.specsValue}>{filteredProducts[activeProduct].specs.dimensions}</div>
+                      </div>
+                    )}
+                    {filteredProducts[activeProduct].specs.weight && 
+                     filteredProducts[activeProduct].specs.weight.toLowerCase() !== 'не указан' && (
+                      <div className={styles.specsRow}>
+                        <div className={styles.specsLabel}>Вес</div>
+                        <div className={styles.specsValue}>{filteredProducts[activeProduct].specs.weight}</div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

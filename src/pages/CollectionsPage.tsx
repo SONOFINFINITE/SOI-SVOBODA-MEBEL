@@ -9,6 +9,11 @@ import stulyaIcon from '../assets/stulya_icon.png';
 import konsoliIcon from '../assets/konsoli_icon.png';
 import vitrinyIcon from '../assets/vitriny_icon.png';
 import allIcon from '../assets/all_icon.png';
+import krovatiIcon from '../assets/krovati_icon.png';
+import zerkalaIcon from '../assets/zerkala_icon.png';
+import taburetyIcon from '../assets/taburety_icon.png';
+import banketkiIcon from '../assets/banketki_icon.png';
+import stelazhiIcon from '../assets/stelazhi_icon.png';
 
 // Данные о коллекциях
 const collections = [
@@ -17,35 +22,42 @@ const collections = [
     name: 'Bryce',
     russianName: 'Естественность и элегантность',
     description: 'Коллекция Bryce с фрезерованными фасадами стала одним из самых модных трендов этого года, который будет сохраняться еще долгое время. Изделия выглядят очень естественно, элегантно и подходят под любой современный стиль.',
-    image: '/images/Коллекции/01.webp'
+    image: '/images/Коллекции/bryce.png'
   },
   {
     id: 'french-classics',
     name: 'Soho',
     russianName: 'Европейский контемпорари',
     description: 'Изделия коллекции SOHO отлично впишутся в любой интерьер, так как используемый стиль контемпорари объединяет европейскую элегантность и скандинавскую ясность форм.',
-    image: '/images/Коллекции/02.webp'
+    image: '/images/Коллекции/soho.png'
   },
   {
     id: 'comfort-relax',
     name: 'Art Deco',
     russianName: 'Экзотический модерн',
     description: 'Стиль, возникший в Европе и США в начале XX века, объединяющий элементы модерна, классики и экзотики. Он славится: геометрическими формами, богатыми декоративными деталями, использованием дорогих материалов, элегантностью и симметрией.',
-    image: '/images/Коллекции/03.webp'
+    image: '/images/Коллекции/artdeco.png'
   },
   {
     id: 'industrial-loft',
     name: 'Sydney',
     russianName: 'Графитовый лофт',
     description: 'Коллекция Sydney выполнена из натурального массива дуба. Изделия отличаются интересным сочетанием латунной фурнитуры с темно-графитовым цветом основания, что создает благородный и при этом современный стильный дизайн.',
-    image: '/images/Коллекции/04.webp'
+    image: '/images/Коллекции/sydney.png'
   },
   {
     id: 'scandinavian-hygge',
     name: 'Gven',
     russianName: 'Минимализм и долговечность',
     description: 'Стиль минимализм и натуральное дерево идеально гармонируют в Коллекции Gven. Использование МДФ и шпона дуба обеспечивает долговечность и эстетическую привлекательность, а ножки из массива дуба добавляют прочности и стабильности.',
-    image: '/images/Коллекции/05.webp'
+    image: '/images/Коллекции/gven.png'
+  },
+  {
+    id: 'dining-groups',
+    name: 'Dining Groups',
+    russianName: 'Столовые группы',
+    description: 'Элегантные столы и стулья для создания уютной столовой зоны. Идеальное сочетание комфорта и стиля для семейных обедов и встреч с друзьями.',
+    image: '/images/Коллекции/dining-groups.png'
   }
 ];
 
@@ -57,10 +69,15 @@ const getCategoryIcon = (categoryId: string): string => {
     'komody': komodyIcon,
     'stoly': stolyIcon,
     'stulya': stulyaIcon,
-    'taburety-i-stulya': stulyaIcon, // Для категории табуреты и стулья используем иконку стульев
+    'taburety-i-stulya': taburetyIcon, // Для категории табуреты и стулья используем иконку табуретов
     'konsoli': konsoliIcon,
     'vitriny': vitrinyIcon,
-    'all': allIcon
+    'all': allIcon,
+    'krovati': krovatiIcon,
+    'zerkala': zerkalaIcon,
+    'taburety': taburetyIcon,
+    'banketki': banketkiIcon,
+    'stelazhi': stelazhiIcon
   };
   
   if (imageIcons[categoryId]) {
@@ -268,15 +285,15 @@ const CollectionsPage: React.FC = () => {
                   </div>
                   <div>Все категории</div>
                 </button>
-                {selectedCollection && collectionCategories[selectedCollection.name.toLowerCase()] && (
-                  collectionCategories[selectedCollection.name.toLowerCase()].map((category) => (
+                {selectedCollection && collectionCategories[selectedCollection.name.toLowerCase().replace(/\s+/g, '-')] && (
+                  collectionCategories[selectedCollection.name.toLowerCase().replace(/\s+/g, '-')].map((category) => (
                     <button
                       key={category.id}
                       className={`${styles.categoryCard} ${selectedCategory === category.id ? styles.categoryCardActive : ''}`}
                       onClick={() => handleCategoryChange(category.id)}
                     >
                       <div className={styles.categoryIcon}>
-                        {['tumby', 'komody', 'stoly', 'stulya', 'taburety-i-stulya', 'konsoli', 'vitriny'].includes(category.id) ? (
+                        {['tumby', 'komody', 'stoly', 'stulya', 'taburety-i-stulya', 'konsoli', 'vitriny', 'krovati', 'zerkala', 'taburety', 'banketki', 'stelazhi'].includes(category.id) ? (
                           <img src={getCategoryIcon(category.id)} alt={category.nameRu} style={{width: '100%', height: '100%', objectFit: 'contain'}} />
                         ) : (
                           getCategoryIcon(category.id)
