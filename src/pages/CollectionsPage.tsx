@@ -14,6 +14,7 @@ import zerkalaIcon from '../assets/zerkala_icon.png';
 import taburetyIcon from '../assets/taburety_icon.png';
 import banketkiIcon from '../assets/banketki_icon.png';
 import stelazhiIcon from '../assets/stelazhi_icon.png';
+import { Link } from 'react-router-dom';
 
 // Данные о коллекциях
 const collections = [
@@ -214,13 +215,20 @@ useEffect(() => {
   return (
     <div className={`${styles.collectionsPage} ${isLoaded ? styles.loaded : ''}`}>
       <div className={styles.collectionsContainer}>
+    
         {/* Превью коллекции слева */}
         <div className={`${styles.collectionPreview} ${styles.fadeInLeft}`}>
           <div 
             className={styles.previewBackground}
             style={{ backgroundImage: `url(${selectedCollection.image})` }}
           >
+            
             <div className={styles.previewOverlay}>
+                <header className={styles.collectionsHeader}>
+                    <Link to='/'>
+                      <img src="..\src\assets\SVOBODA_LOGO_WHITE.png" alt="" className={styles.headerLogo} />
+                    </Link>
+                </header>
               <div className={styles.previewContent}>
                 <div className={styles.magazineLayout}>
                   <div className={`${styles.collectionNumber} ${styles.fadeInUp}`}>

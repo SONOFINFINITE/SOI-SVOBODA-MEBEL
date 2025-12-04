@@ -109,6 +109,7 @@
   flex-direction: column;
   justify-content: space-between;
   padding: 3rem;
+  padding-top: 1rem;
   
   @media (max-width: 768px) {
     padding: 2rem;
@@ -966,4 +967,14 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+}
+.collectionsHeader{
+  width: 100%;
+  max-width: 1852px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.headerLogo{
+  height: 85px;
 }
