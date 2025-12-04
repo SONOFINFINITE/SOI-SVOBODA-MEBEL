@@ -226,7 +226,7 @@ useEffect(() => {
             <div className={styles.previewOverlay}>
                 <header className={styles.collectionsHeader}>
                     <Link to='/'>
-                      <img src="..\src\assets\SVOBODA_LOGO_WHITE.png" alt="" className={styles.headerLogo} />
+                      <img src='../../assets/SVOBODA_LOGO_WHITE.png' alt="" className={styles.headerLogo} />
                     </Link>
                 </header>
               <div className={styles.previewContent}>
