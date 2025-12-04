@@ -69,7 +69,7 @@ const getCategoryIcon = (categoryId: string): string => {
     'komody': komodyIcon,
     'stoly': stolyIcon,
     'stulya': stulyaIcon,
-    'taburety-i-stulya': taburetyIcon, // Для категории табуреты и стулья используем иконку табуретов
+    'taburety-i-stulya': taburetyIcon,
     'konsoli': konsoliIcon,
     'vitriny': vitrinyIcon,
     'all': allIcon,
@@ -108,6 +108,7 @@ const CollectionsPage: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [showCollectionsMenu, setShowCollectionsMenu] = useState(true);
+  const [showAllCollections, setShowAllCollections] = useState(false);
   const navigate = useNavigate();
 
   // Проверка на мобильное устройство
@@ -131,21 +132,27 @@ const CollectionsPage: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Автоматический слайдер для мобильных устройств
-  useEffect(() => {
-    // Остановить автопереключение если не мобильное устройство или открыто меню категорий
-    if (!isMobile || showCategoryPicker) return;
+  // Автоматический слайдер для мобильных устройств (только для первых 3 коллекций)
+// Автоматический слайдер для мобильных устройств
+useEffect(() => {
+  // Остановить автопереключение если:
+  // - не мобильное устройство
+  // - открыто меню категорий
+  if (!isMobile || showCategoryPicker) return;
 
-    const interval = setInterval(() => {
-      setSelectedCollection(current => {
-        const currentIndex = collections.findIndex(col => col.id === current.id);
-        const nextIndex = (currentIndex + 1) % collections.length;
-        return collections[nextIndex];
-      });
-    }, 3000);
+  const interval = setInterval(() => {
+    setSelectedCollection(current => {
+      // Используем visibleCollections вместо жестко заданных первых 3
+      const availableCollections = showAllCollections ? collections : collections.slice(0, 4);
+      const currentIndex = availableCollections.findIndex(col => col.id === current.id);
+      const nextIndex = (currentIndex + 1) % availableCollections.length;
+      return availableCollections[nextIndex];
+    });
+  }, 3000);
 
-    return () => clearInterval(interval);
-  }, [isMobile, showCategoryPicker]);
+  return () => clearInterval(interval);
+}, [isMobile, showCategoryPicker, showAllCollections]); // Добавили showAllCollections в зависимости
+
 
   const handleCollectionSelect = (collection: typeof collections[0]) => {
     setSelectedCollection(collection);
@@ -193,6 +200,17 @@ const CollectionsPage: React.FC = () => {
     }, 300); // Wait for fade out animation to complete
   };
 
+  const handleShowAllCollections = () => {
+    setShowAllCollections(!showAllCollections);
+  };
+
+  // Получаем коллекции для отображения
+  const visibleCollections = isMobile && !showAllCollections 
+    ? collections.slice(0, 4) 
+    : showAllCollections 
+    ? collections 
+    : collections.slice(0, 4);
+
   return (
     <div className={`${styles.collectionsPage} ${isLoaded ? styles.loaded : ''}`}>
       <div className={styles.collectionsContainer}>
@@ -239,12 +257,19 @@ const CollectionsPage: React.FC = () => {
                   {showCategoryPicker ? 'Выберите категорию для просмотра' : 'Выберите коллекцию для просмотра'}
                 </p>
               </div>
-              {showCategoryPicker && (
+              {showCategoryPicker ? (
                 <button
                   className={`${styles.categoryButton} ${styles.backButton}`}
                   onClick={handleBackToCollections}
                 >
                   ← Назад к коллекциям
+                </button>
+              ) : (
+                <button
+                  className={`${styles.categoryButton} ${styles.backButton}`}
+                  onClick={() => navigate('/')}
+                >
+                  ← На главную
                 </button>
               )}
             </div>
@@ -254,13 +279,13 @@ const CollectionsPage: React.FC = () => {
           {showCollectionsMenu && (
             <div className={`${styles.collectionsList} ${styles.fadeIn}`}>
               <nav className={styles.menuNav}>
-                {collections.map((collection, index) => (
+                {visibleCollections.map((collection, index) => (
                   <button
                     key={collection.id}
                     className={`${styles.menuItem} ${styles.fadeInUp} ${selectedCollection.id === collection.id ? styles.menuItemActive : ''}`}
-                    style={{ animationDelay: `${0.3 + index * 0.1}s` }}
+                    style={{ animationDelay: `${0.1 + index * 0.05}s` }}
                     onClick={() => handleCollectionClick(collection)}
-                    onMouseEnter={() => handleCollectionSelect(collection)}
+                    onMouseEnter={() => !isMobile && handleCollectionSelect(collection)}
                   >
                     <div className={styles.menuItemContent}>
                       <h3 className={styles.menuItemTitle}>{collection.name}</h3>
@@ -269,6 +294,17 @@ const CollectionsPage: React.FC = () => {
                   </button>
                 ))}
               </nav>
+              
+              {collections.length > (isMobile ? 3 : 4) && (
+                <button 
+                  className={`${styles.showAllButton} ${styles.fadeInUp}`}
+                  style={{ animationDelay: '0.3s' }}
+                  onClick={handleShowAllCollections}
+                >
+                  {showAllCollections ? 'Скрыть' : 'Показать все коллекции'}
+                  <span className={`${styles.showAllArrow} ${showAllCollections ? styles.rotated : ''}`}>↓</span>
+                </button>
+              )}
             </div>
           )}
           
