@@ -21,16 +21,17 @@ const PhoneIcon: React.FC = () => (
 
 interface PhoneButtonProps {
   theme?: 'dark' | 'light';
+  position?: 'left' | 'right';
 }
 
-const PhoneButton: React.FC<PhoneButtonProps> = ({ theme = 'dark' }) => {
+const PhoneButton: React.FC<PhoneButtonProps> = ({ theme = 'dark', position = 'left' }) => {
   const handleClick = () => {
     window.open('tel:+79108237272', '_self');
   };
 
   return (
     <button 
-      className={`${styles.phoneButton} ${theme === 'light' ? styles.phoneButtonLight : ''}`} 
+      className={`${styles.phoneButton} ${theme === 'light' ? styles.phoneButtonLight : ''} ${position === 'right' ? styles.phoneButtonRight : ''}`} 
       onClick={handleClick}
       aria-label="Позвонить по номеру +7 (910) 823-72-72"
     >

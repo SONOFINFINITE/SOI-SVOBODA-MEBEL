@@ -90,6 +90,13 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({ isOpen, onClose }) => {
                 </div>
                 <nav className={styles.drawer__nav}>
                     <ul>
+                        <li>
+                            <a href="/catalog" onClick={(e) => {
+                                e.preventDefault();
+                                onClose();
+                                navigate('/catalog');
+                            }}>Каталог</a>
+                        </li>
                          <li>
                             <a href="/collections">Коллекции</a>
                         </li>

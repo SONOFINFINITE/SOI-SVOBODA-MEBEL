@@ -1,543 +1,517 @@
-import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { products, collections, collectionCategories } from '../data/catalog';
 import Header from '../components/Header/Header';
 import { Footer } from '../components/Footer/footer';
-import PhoneButton from '../components/PhoneButton/phone-button';
-import ModalGallery from '../components/ModalGallery/ModalGallery';
-import { products, collections, getCollectionIdFromName, getProductImages } from '../data/catalog';
 import styles from './CatalogPage.module.scss';
-// Регистрируем плагин ScrollTrigger
-gsap.registerPlugin(ScrollTrigger);
-const CatalogPage: React.FC = () => {
-const { collectionId, collectionName } = useParams<{ collectionId?: string; collectionName?: string }>();
-const navigate = useNavigate();
-const [searchParams] = useSearchParams();
-// Определяем текущую коллекцию
-const currentCollectionId = collectionName ? getCollectionIdFromName(collectionName) : collectionId;
-// Получаем категорию из URL параметров
-const categoryParam = searchParams.get('category');
-// Фильтруем товары по коллекции и категории - используем useMemo для предотвращения пересоздания массива
-const filteredProducts = useMemo(() => {
-  let filtered = currentCollectionId
-    ? products.filter(product => product.collection === currentCollectionId)
-    : products;
-  
-  // Если указана категория, фильтруем по ней
-  if (categoryParam && categoryParam !== 'all') {
-    filtered = filtered.filter(product => product.category === categoryParam);
-  }
-  
-  return filtered;
-}, [currentCollectionId, categoryParam]);
-// Если коллекция не найдена, перенаправляем на страницу коллекций
-useEffect(() => {
-if (collectionName && !currentCollectionId) {
-navigate('/collections');
-} else if (collectionId && !collections[collectionId as keyof typeof collections]) {
-navigate('/collections');
-}
-}, [collectionId, collectionName, currentCollectionId, navigate]);
-const [activeProduct, setActiveProduct] = useState(0);
-const sectionsRef = useRef<HTMLDivElement>(null);
-const productRefs = useRef<(HTMLDivElement | null)[]>([]);
-const autoPlayRef = useRef<number | null>(null);
-const lastInteractionRef = useRef<number>(Date.now());
-// Состояние для модальной галереи
-const [isGalleryOpen, setIsGalleryOpen] = useState(false);
-const [galleryActiveImage, setGalleryActiveImage] = useState(0);
-// Touch/Swipe состояния
-const [touchStart, setTouchStart] = useState<number | null>(null);
-const [touchEnd, setTouchEnd] = useState<number | null>(null);
-const [, setIsDragging] = useState(false);
-const [touchStartedInInfo, setTouchStartedInInfo] = useState(false);
-const [imageLoaded, setImageLoaded] = useState(false);
-// Состояние для выбранного варианта товара
-const [selectedVariant, setSelectedVariant] = useState<number>(0);
-// Мемоизируем список изображений для текущего товара, чтобы избежать лишних пересчетов при рендере
-const currentProductImages = useMemo(() => {
-if (!filteredProducts[activeProduct]) return [];
-return getProductImages(filteredProducts[activeProduct]);
-}, [activeProduct, filteredProducts]);
 
-// Получаем актуальный артикул и цену на основе выбранного варианта
-const currentArticle = useMemo(() => {
-  const product = filteredProducts[activeProduct];
-  if (!product) return '';
-  if (product.variants && product.variants.length > 0) {
-    return product.variants[selectedVariant]?.article || product.article || '';
-  }
-  return product.article || '';
-}, [activeProduct, selectedVariant, filteredProducts]);
+// Import icons
+import tumbyIcon from '../assets/tumby_icon.png';
+import komodyIcon from '../assets/komody_icon.png';
+import stolyIcon from '../assets/stoly_icon.png';
+import stulyaIcon from '../assets/stulya_icon.png';
+import konsoliIcon from '../assets/konsoli_icon.png';
+import vitrinyIcon from '../assets/vitriny_icon.png';
+import allIcon from '../assets/all_icon.png';
+import krovatiIcon from '../assets/krovati_icon.png';
+import zerkalaIcon from '../assets/zerkala_icon.png';
+import taburetyIcon from '../assets/taburety_icon.png';
+import banketkiIcon from '../assets/banketki_icon.png';
+import stelazhiIcon from '../assets/stelazhi_icon.png';
+import PhoneButton from '../components/PhoneButton/phone-button';
 
-const currentPrice = useMemo(() => {
-  const product = filteredProducts[activeProduct];
-  if (!product) return '';
-  if (product.variants && product.variants.length > 0) {
-    return product.variants[selectedVariant]?.price || product.price;
-  }
-  return product.price;
-}, [activeProduct, selectedVariant, filteredProducts]);
-const nextSlide = () => {
-setActiveProduct((prev) => (prev + 1) % filteredProducts.length);
-setSelectedVariant(0); // Сброс варианта при смене товара
-lastInteractionRef.current = Date.now();
-};
-const prevSlide = () => {
-setActiveProduct((prev) => (prev - 1 + filteredProducts.length) % filteredProducts.length);
-setSelectedVariant(0); // Сброс варианта при смене товара
-lastInteractionRef.current = Date.now();
-};
-const goToSlide = (index: number) => {
-setActiveProduct(index);
-setSelectedVariant(0); // Сброс варианта при смене товара
-lastInteractionRef.current = Date.now();
-};
+const FilterIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M22 3H2L10 12.46V19L14 21V12.46L22 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
 
+const CloseIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
 
-const handleNextSlide = () => {
-nextSlide();
-lastInteractionRef.current = Date.now();
-};
-// Минимальная дистанция свайпа для срабатывания
-const minSwipeDistance = 50;
-// Обработчики touch-событий
-const onTouchStart = (e: React.TouchEvent) => {
-// Проверяем, началось ли касание в области описания товара
-const target = e.target as HTMLElement;
-const isInProductInfo = target.closest(`.${styles.productInfoContent}`);
-setTouchStartedInInfo(!!isInProductInfo);
+const ChevronLeft = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M15 18l-6-6 6-6" />
+  </svg>
+);
 
-setTouchEnd(null);
-setTouchStart(e.targetTouches[0].clientX);
-setIsDragging(false);
-};
-const onTouchMove = (e: React.TouchEvent) => {
-if (touchStart === null) return;
-const currentX = e.targetTouches[0].clientX;
-setTouchEnd(currentX);
-setIsDragging(true);
+const ChevronRight = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 18l6-6-6-6" />
+  </svg>
+);
 
-// Предотвращаем скролл страницы при горизонтальном свайпе
-const deltaX = Math.abs(currentX - touchStart);
-
-if (deltaX > 10) { // Если горизонтальное движение больше 10px
-  e.preventDefault();
-}
-
-};
-const onTouchEnd = () => {
-if (!touchStart || !touchEnd) {
-setTouchStart(null);
-setTouchEnd(null);
-setIsDragging(false);
-setTouchStartedInInfo(false);
-return;
-}
-
-// Не переключаем слайды, если касание началось в области описания
-if (!touchStartedInInfo) {
-  const distance = touchStart - touchEnd;
-  const isLeftSwipe = distance > minSwipeDistance;
-  const isRightSwipe = distance < -minSwipeDistance;
-
-  if (isLeftSwipe) {
-    handleNextSlide();
-  } else if (isRightSwipe) {
-    prevSlide();
-  }
-}
-
-setTouchStart(null);
-setTouchEnd(null);
-setIsDragging(false);
-setTouchStartedInInfo(false);
-
-};
-// Обработчики mouse-событий для десктопа (drag)
-const onMouseDown = (e: React.MouseEvent) => {
-if (window.innerWidth > 1024) return; // Только для планшетов и мобильных
-
-setTouchEnd(null);
-setTouchStart(e.clientX);
-setIsDragging(false);
-
-};
-const onMouseMove = (e: React.MouseEvent) => {
-if (window.innerWidth > 1024 || touchStart === null) return;
-setTouchEnd(e.clientX);
-setIsDragging(true);
-};
-const onMouseUp = () => {
-if (window.innerWidth > 1024) return;
-
-if (!touchStart || !touchEnd) {
-  setTouchStart(null);
-  setTouchEnd(null);
-  setIsDragging(false);
-  return;
-}
-
-const distance = touchStart - touchEnd;
-const isLeftSwipe = distance > minSwipeDistance;
-const isRightSwipe = distance < -minSwipeDistance;
-
-if (isLeftSwipe) {
-  handleNextSlide();
-} else if (isRightSwipe) {
-  prevSlide();
-}
-
-setTouchStart(null);
-setTouchEnd(null);
-setIsDragging(false);
-
-};
-// Сброс активного слайда при смене коллекции
-useEffect(() => {
-setActiveProduct(0);
-setSelectedVariant(0);
-}, [currentCollectionId]);
-// Сброс состояния загрузки при смене слайда
-useEffect(() => {
-if (!filteredProducts[activeProduct]) return;
-
-setImageLoaded(false);
-
-// Предварительная загрузка текущего изображения
-const img = new Image();
-img.onload = () => setImageLoaded(true);
-img.src = filteredProducts[activeProduct].image;
-
-// Предварительная загрузка следующих изображений для быстрого отображения на планшетах
-if (window.innerWidth <= 1024) {
-  filteredProducts.forEach((product, index) => {
-    if (index !== activeProduct) {
-      const preloadImg = new Image();
-      preloadImg.src = product.image;
-    }
-  });
-}
-
-}, [activeProduct]); // Убираем filteredProducts из зависимостей, т.к. он теперь мемоизирован
-// Автопроигрывание слайдов каждые 8 секунд
-useEffect(() => {
-// Приостанавливаем автопроигрывание, если открыта галерея или товаров меньше 2
-if (isGalleryOpen || filteredProducts.length <= 1) {
-if (autoPlayRef.current) {
-clearInterval(autoPlayRef.current);
-autoPlayRef.current = null;
-}
-return;
-}
-// Очищаем предыдущий таймер, если он есть
-if (autoPlayRef.current) {
-  clearInterval(autoPlayRef.current);
-}
-
-// Устанавливаем новый таймер
-autoPlayRef.current = window.setInterval(() => {
-  const timeSinceLastInteraction = Date.now() - lastInteractionRef.current;
-  // Если прошло 8 секунд с последнего взаимодействия, переключаем слайд
-  if (timeSinceLastInteraction >= 8000) {
-    setActiveProduct((prev) => {
-      const next = (prev + 1) % filteredProducts.length;
-      lastInteractionRef.current = Date.now();
-      return next;
-    });
-  }
-}, 1000); // Проверяем каждую секунду
-
-return () => {
-  if (autoPlayRef.current) {
-    clearInterval(autoPlayRef.current);
-    autoPlayRef.current = null;
-  }
-};
-
-}, [filteredProducts.length, isGalleryOpen]); // Добавляем isGalleryOpen в зависимости
-
-// ДОБАВЛЕНО: Эффект для блокировки скролла страницы при открытой галерее
-useEffect(() => {
-  if (isGalleryOpen) {
-    document.body.style.overflow = 'hidden';
-  } else {
-    document.body.style.overflow = 'auto';
-  }
-
-  // Функция очистки: возвращаем скролл, если компонент размонтируется
-  return () => {
-    document.body.style.overflow = 'auto';
+const getCategoryIcon = (categoryId: string): string => {
+  const imageIcons: { [key: string]: string } = {
+    'tumby': tumbyIcon,
+    'komody': komodyIcon,
+    'stoly': stolyIcon,
+    'stulya': stulyaIcon,
+    'taburety-i-stulya': taburetyIcon,
+    'konsoli': konsoliIcon,
+    'vitriny': vitrinyIcon,
+    'all': allIcon,
+    'krovati': krovatiIcon,
+    'zerkala': zerkalaIcon,
+    'taburety': taburetyIcon,
+    'banketki': banketkiIcon,
+    'stelazhi': stelazhiIcon
   };
-}, [isGalleryOpen]);
-
-
-// Анимации
-useEffect(() => {
-// Проверяем условия для запуска анимации
-if (isGalleryOpen || !sectionsRef.current || filteredProducts.length === 0 || !imageLoaded) return;
-
-const sections = productRefs.current.filter(Boolean);
-const currentSection = sections[activeProduct];
-
-if (currentSection) {
-  const infoContent = currentSection.querySelector(`.${styles.productInfoContent}`);
   
-  // Единая плавная анимация для всех устройств
-  gsap.timeline()
-    .fromTo(currentSection, 
-      { opacity: 0.9, scale: 0.95, y: 0 }, 
-      { opacity: 1, scale: 1, y: 0, duration: 0.6, ease: "power3.out" }
-    )
-    .fromTo(infoContent, 
-      { opacity: 0, x: -50 }, 
-      { opacity: 1, x: 0, duration: 0.6, ease: "power2.out" }, 
-      "-=0.4"
+  if (imageIcons[categoryId]) {
+    return imageIcons[categoryId];
+  }
+  return '🏠';
+};
+
+// Helper to parse price
+const parsePrice = (priceStr: string): number => {
+  return parseInt(priceStr.replace(/\D/g, ''), 10) || 0;
+};
+
+const ITEMS_PER_PAGE = 20;
+
+const CatalogPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Initialize state from URL params
+  const [selectedCollections, setSelectedCollections] = useState<string[]>(() => searchParams.getAll('collection'));
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(() => searchParams.getAll('category'));
+  const [selectedMaterials, setSelectedMaterials] = useState<string[]>(() => searchParams.getAll('material'));
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || '');
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(() => parseInt(searchParams.get('page') || '1', 10));
+
+  // Price Filter State
+  const [minPrice, setMinPrice] = useState<number>(0);
+  const [maxPrice, setMaxPrice] = useState<number>(1000000);
+  const [priceRange, setPriceRange] = useState<[number, number]>(() => {
+    const min = searchParams.get('minPrice');
+    const max = searchParams.get('maxPrice');
+    return min && max ? [parseInt(min), parseInt(max)] : [0, 1000000];
+  });
+
+  // Calculate global min/max prices once
+  useEffect(() => {
+    if (products.length > 0) {
+      const prices = products.map(p => parsePrice(p.price));
+      const min = Math.min(...prices);
+      const max = Math.max(...prices);
+      setMinPrice(min);
+      setMaxPrice(max);
+      
+      // Only set default price range if not present in URL
+      const urlMin = searchParams.get('minPrice');
+      const urlMax = searchParams.get('maxPrice');
+      if (!urlMin || !urlMax) {
+        setPriceRange([min, max]);
+      }
+    }
+  }, []);
+
+  // Extract unique categories and collections for filters
+  const allCategories = useMemo(() => {
+    const categories = new Set<string>();
+    products.forEach(p => categories.add(p.category));
+    return Array.from(categories).sort();
+  }, []);
+
+  const allCollections = useMemo(() => {
+    const cols = new Set<string>();
+    products.forEach(p => cols.add(p.collection));
+    return Array.from(cols).sort();
+  }, []);
+
+  // Extract unique materials
+  const allMaterials = useMemo(() => {
+    const materials = new Set<string>();
+    products.forEach(p => {
+      if (p.specs?.material) {
+        p.specs.material.split(',').forEach(m => {
+           const cleanMat = m.trim();
+           if (cleanMat) materials.add(cleanMat);
+        });
+      }
+    });
+    return Array.from(materials).sort();
+  }, []);
+
+  // Helper to get Russian name for category
+  const getCategoryNameRu = (catId: string) => {
+    for (const colId in collectionCategories) {
+      const category = collectionCategories[colId].find(c => c.id === catId);
+      if (category) return category.nameRu;
+    }
+    // Fallback
+    return catId.charAt(0).toUpperCase() + catId.slice(1).replace(/-/g, ' ');
+  };
+
+  // Filter products
+  const filteredProducts = useMemo(() => {
+    return products.filter(product => {
+      const matchCollection = selectedCollections.length === 0 || selectedCollections.includes(product.collection);
+      const matchCategory = selectedCategories.length === 0 || selectedCategories.includes(product.category);
+      const matchSearch = searchQuery === '' || 
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (product.article && product.article.toLowerCase().includes(searchQuery.toLowerCase()));
+      
+      const price = parsePrice(product.price);
+      const matchPrice = price >= priceRange[0] && price <= priceRange[1];
+
+      // Material filter
+      let matchMaterial = true;
+      if (selectedMaterials.length > 0) {
+         if (!product.specs?.material) {
+             matchMaterial = false;
+         } else {
+             const productMaterials = product.specs.material.split(',').map(m => m.trim());
+             // Check if ANY selected material is present in product materials
+             matchMaterial = selectedMaterials.some(m => productMaterials.includes(m));
+         }
+      }
+
+      return matchCollection && matchCategory && matchSearch && matchPrice && matchMaterial;
+    });
+  }, [selectedCollections, selectedCategories, selectedMaterials, searchQuery, priceRange]);
+
+  const isMounted = useRef(false);
+
+  // Reset page when filters change
+  useEffect(() => {
+    if (isMounted.current) {
+      setCurrentPage(1);
+    } else {
+      isMounted.current = true;
+    }
+  }, [selectedCollections, selectedCategories, selectedMaterials, searchQuery, priceRange]);
+
+  // Sync state to URL
+  useEffect(() => {
+    const params = new URLSearchParams();
+    selectedCollections.forEach(c => params.append('collection', c));
+    selectedCategories.forEach(c => params.append('category', c));
+    selectedMaterials.forEach(m => params.append('material', m));
+    if (searchQuery) params.set('q', searchQuery);
+    if (currentPage > 1) params.set('page', currentPage.toString());
+    
+    params.set('minPrice', priceRange[0].toString());
+    params.set('maxPrice', priceRange[1].toString());
+
+    setSearchParams(params, { replace: true });
+  }, [selectedCollections, selectedCategories, selectedMaterials, searchQuery, priceRange, currentPage, setSearchParams]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredProducts, currentPage]);
+
+  // Handlers
+  const toggleCollection = (collection: string) => {
+    setSelectedCollections(prev => 
+      prev.includes(collection) 
+        ? prev.filter(c => c !== collection)
+        : [...prev, collection]
     );
-}
+  };
 
-return () => {
-  ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-};
-}, [activeProduct, imageLoaded]); // Оптимизируем зависимости
-// Обработчик клика по фону (открывает галерею)
-const handleBackgroundClick = (e: React.MouseEvent) => {
-// Останавливаем всплытие события и предотвращаем действия по умолчанию
-e.stopPropagation();
-e.preventDefault();
-// Открываем галерею при клике на фон
-setIsGalleryOpen(true);
-setGalleryActiveImage(0); // Начинаем с первого изображения
-};
-// Закрытие галереи
-const closeGallery = useCallback(() => {
-  setIsGalleryOpen(false);
-  lastInteractionRef.current = Date.now();
-}, []);
+  const toggleCategory = (category: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(category) 
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    );
+  };
 
-// Навигация по галерее
-const nextGalleryImage = useCallback((e?: React.MouseEvent | React.TouchEvent) => {
-  if (e) {
-    e.stopPropagation();
-    e.preventDefault();
-  }
-  if (currentProductImages.length === 0) return;
-  setGalleryActiveImage((prev) => (prev + 1) % currentProductImages.length);
-}, [currentProductImages.length]);
+  const toggleMaterial = (material: string) => {
+    setSelectedMaterials(prev => 
+      prev.includes(material) 
+        ? prev.filter(m => m !== material)
+        : [...prev, material]
+    );
+  };
 
-const prevGalleryImage = useCallback((e?: React.MouseEvent | React.TouchEvent) => {
-  if (e) {
-    e.stopPropagation();
-    e.preventDefault();
-  }
-  if (currentProductImages.length === 0) return;
-  setGalleryActiveImage((prev) => (prev - 1 + currentProductImages.length) % currentProductImages.length);
-}, [currentProductImages.length]);
+  const handleProductClick = (uid: string) => {
+    navigate(`/product/${uid}`);
+  };
 
-const handleGalleryImageChange = useCallback((index: number) => {
-  setGalleryActiveImage(index);
-}, []);
-// Обработчик клавиш для галереи и слайдера
-useEffect(() => {
-const handleKeyDown = (event: KeyboardEvent) => {
-if (isGalleryOpen) {
-if (event.key === 'ArrowLeft') {
-event.preventDefault();
-prevGalleryImage();
-} else if (event.key === 'ArrowRight') {
-event.preventDefault();
-nextGalleryImage();
-} else if (event.key === 'Escape') {
-closeGallery();
-}
-} else {
-if (event.key === 'ArrowLeft') {
-event.preventDefault();
-prevSlide();
-} else if (event.key === 'ArrowRight') {
-event.preventDefault();
-handleNextSlide();
-}
-}
-};
+  const handlePriceChange = (index: 0 | 1, value: string) => {
+    const val = parseInt(value, 10) || 0;
+    const newRange = [...priceRange] as [number, number];
+    newRange[index] = val;
+    setPriceRange(newRange);
+  };
 
-window.addEventListener('keydown', handleKeyDown);
-return () => window.removeEventListener('keydown', handleKeyDown);
-}, [isGalleryOpen, activeProduct, filteredProducts.length]);
-// Если нет товаров в коллекции
-if (filteredProducts.length === 0 && currentCollectionId) {
-return (
-<div className={styles.catalogPage}>
-<Header />
-<div className={styles.emptyCollection}>
-<h2>Коллекция пуста</h2>
-<p>В данной коллекции пока нет товаров</p>
-<button onClick={() => navigate('/collections')}>
-Вернуться к коллекциям
-</button>
-</div>
-<Footer />
-</div>
-);
-}
-// Если товары еще загружаются или массив пуст (начальное состояние)
-if (filteredProducts.length === 0) {
-return (
-<div className={styles.loaderContainer}>
-<div className={styles.loader}>
-<div className={styles.loaderText}>SVOBODA</div>
-<div className={styles.loaderBar}></div>
-</div>
-</div>
-);
-}
-return (
-<div className={styles.catalogPage}>
-<div className={styles.catalogContent}>
-<Header />
-<div
-className={styles.sliderContainer}
-onMouseEnter={() => {}}
-onMouseLeave={() => {
-onMouseUp();
-}}
-onTouchStart={onTouchStart}
-onTouchMove={onTouchMove}
-onTouchEnd={onTouchEnd}
-onMouseDown={onMouseDown}
-onMouseMove={onMouseMove}
-onMouseUp={onMouseUp}
->
-{/* Навигация стрелками */}
-<button className={styles.sliderArrow + ' ' + styles.sliderArrowLeft} onClick={(e) => {
-e.stopPropagation();
-prevSlide();
-}}>
-</button>
-<button className={styles.sliderArrow + ' ' + styles.sliderArrowRight} onClick={(e) => {
-e.stopPropagation();
-handleNextSlide();
-}}>
-</button>
-{/* Слайд */}
-      <div className={styles.productShowcase} ref={sectionsRef}>
-        <div 
-          ref={(el) => {
-            if (el) {
-              productRefs.current[activeProduct] = el;
-            }
-          }}
-          className={styles.productSection}
-        >
-          <div className={styles.productFullscreenWrapper}>
-            <div 
-              className={`${styles.productBackground} ${filteredProducts[activeProduct].collection === 'dining groups' ? styles.productBackgroundDiningGroups : ''}`}
-              style={{ backgroundImage: `url(${filteredProducts[activeProduct].image})` }}
-              onClick={handleBackgroundClick}
-              role="button"
-              tabIndex={0}
-              aria-label="Открыть галерею изображений"
-            >
-              {/* Контейнер-якорь для точек */}
-              <div className={styles.dotsAnchor}>
-                {/* Точки для переключения слайдов */}
-                {!isGalleryOpen && filteredProducts.length > 1 && (
-                  <div className={styles.sliderDots}>
-                      {filteredProducts.map((_, index) => (
-                      <button
-                          key={index}
-                          className={`${styles.sliderDot} ${index === activeProduct ? styles.sliderDotActive : ''}`}
-                          onClick={(e) => {
-                            e.stopPropagation(); // Важно, чтобы клик не открывал галерею
-                            e.preventDefault();
-                            goToSlide(index);
-                          }}
-                          aria-label={`Перейти к слайду ${index + 1}`}
-                      />
-                      ))}
-                  </div>
-                )}
+  const handleSliderChange = (index: 0 | 1, value: string) => {
+     const val = parseInt(value, 10);
+     const newRange = [...priceRange] as [number, number];
+     newRange[index] = val;
+     
+     // Ensure min <= max
+     if (index === 0 && val > newRange[1]) newRange[0] = newRange[1];
+     if (index === 1 && val < newRange[0]) newRange[1] = newRange[0];
+     
+     setPriceRange(newRange);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const getPercent = (value: number) => {
+    if (maxPrice === minPrice) return 0;
+    return Math.round(((value - minPrice) / (maxPrice - minPrice)) * 100);
+  };
+
+  // Generate a key that changes when filters or page change to force re-animation
+  const viewKey = useMemo(() => {
+    return [
+      currentPage,
+      selectedCollections.join(','),
+      selectedCategories.join(','),
+      selectedMaterials.join(','),
+      searchQuery,
+      priceRange.join(',')
+    ].join('|');
+  }, [currentPage, selectedCollections, selectedCategories, selectedMaterials, searchQuery, priceRange]);
+
+  return (
+    <div className={styles.catalogPage}>
+      <Header />
+      
+      <div 
+        className={`${styles.mobileFilterOverlay} ${isMobileFiltersOpen ? styles.open : ''}`}
+        onClick={() => setIsMobileFiltersOpen(false)}
+      />
+      
+      <div className={styles.catalogContainer}>
+        {/* Sidebar Filters */}
+        <aside className={`${styles.filtersSidebar} ${isMobileFiltersOpen ? styles.open : ''}`}>
+          <button 
+            className={styles.closeFilterButton}
+            onClick={() => setIsMobileFiltersOpen(false)}
+            aria-label="Закрыть фильтры"
+          >
+            <CloseIcon />
+          </button>
+
+          <div className={styles.sidebarContent}>
+            {/* Search */}
+            <div className={styles.searchSection}>
+               <input 
+                 type="text" 
+                 placeholder="Поиск..." 
+                 value={searchQuery}
+                 onChange={(e) => setSearchQuery(e.target.value)}
+                 className={styles.searchInput}
+               />
+            </div>
+
+            {/* Collections Filter */}
+            <div className={styles.filterSection}>
+              <h3>Коллекции</h3>
+              <div className={styles.collectionPickers}>
+                {allCollections.map(collection => (
+                  <button
+                    key={collection} 
+                    className={`${styles.collectionPicker} ${selectedCollections.includes(collection) ? styles.active : ''}`}
+                    onClick={() => toggleCollection(collection)}
+                  >
+                    {collections[collection] ? collections[collection].name : collection}
+                  </button>
+                ))}
               </div>
             </div>
-            
-            <div className={`${styles.productInfoOverlay} ${activeProduct % 2 === 0 ? styles.infoLeft : styles.infoRight}`}>
-              <div className={styles.productInfoContent} onClick={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onTouchEnd={(e) => e.stopPropagation()}>
-                {currentArticle && (
-                  <div className={styles.productArticle}>
-                    Артикул: {currentArticle}
-                  </div>
-                )}
-                <h2 className={styles.productName}>{filteredProducts[activeProduct].name}</h2>
-                <p className={styles.productPrice}>{currentPrice}</p>
-                
-                {/* Переключатель вариантов */}
-                {filteredProducts[activeProduct].variants && filteredProducts[activeProduct].variants!.length > 1 && (
-                  <div className={styles.variantSelector}>
-                    {filteredProducts[activeProduct].variants!.map((variant, index) => (
-                      <button
-                        key={index}
-                        className={`${styles.variantButton} ${index === selectedVariant ? styles.variantButtonActive : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedVariant(index);
+
+            {/* Categories Filter */}
+            <div className={styles.filterSection}>
+              <h3>Категории</h3>
+              <div className={styles.categoryList}>
+                {allCategories.map(category => (
+                  <button 
+                    key={category} 
+                    className={`${styles.categoryItem} ${selectedCategories.includes(category) ? styles.active : ''}`}
+                    onClick={() => toggleCategory(category)}
+                  >
+                    <div className={styles.categoryIcon}>
+                       <img src={getCategoryIcon(category)} alt={category} loading="lazy" />
+                    </div>
+                    <span>{getCategoryNameRu(category)}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+             {/* Materials Filter */}
+             <div className={styles.filterSection}>
+              <h3>Материалы</h3>
+              <div className={styles.collectionPickers}> {/* Reusing collection picker styles */}
+                {allMaterials.map(material => (
+                  <button
+                    key={material} 
+                    className={`${styles.collectionPicker} ${selectedMaterials.includes(material) ? styles.active : ''}`}
+                    onClick={() => toggleMaterial(material)}
+                  >
+                    {material}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+             {/* Price Filter */}
+             <div className={styles.filterSection}>
+              <h3>Цена</h3>
+              <div className={styles.priceFilter}>
+                <div className={styles.priceInputs}>
+                    <input 
+                        type="number" 
+                        value={priceRange[0]} 
+                        onChange={(e) => handlePriceChange(0, e.target.value)}
+                        min={minPrice}
+                        max={maxPrice}
+                    />
+                    <span>-</span>
+                    <input 
+                        type="number" 
+                        value={priceRange[1]} 
+                        onChange={(e) => handlePriceChange(1, e.target.value)}
+                        min={minPrice}
+                        max={maxPrice}
+                    />
+                </div>
+                <div className={styles.rangeSlider}>
+                    <input 
+                        type="range" 
+                        min={minPrice} 
+                        max={maxPrice} 
+                        value={priceRange[0]} 
+                        onChange={(e) => handleSliderChange(0, e.target.value)}
+                        className={styles.thumb}
+                    />
+                    <input 
+                        type="range" 
+                        min={minPrice} 
+                        max={maxPrice} 
+                        value={priceRange[1]} 
+                        onChange={(e) => handleSliderChange(1, e.target.value)}
+                        className={styles.thumb}
+                    />
+                     <div className={styles.sliderTrack}></div>
+                     <div 
+                        className={styles.sliderRange} 
+                        style={{ 
+                            left: `${getPercent(priceRange[0])}%`, 
+                            width: `${getPercent(priceRange[1]) - getPercent(priceRange[0])}%` 
                         }}
-                      >
-                        {variant.material}
-                      </button>
-                    ))}
-                  </div>
-                )}
-                
-                <div className={styles.productDetails}>
-                  
-                  <div className={styles.productSpecsTable}>
-                    {filteredProducts[activeProduct].specs.material && 
-                     filteredProducts[activeProduct].specs.material.toLowerCase() !== 'не указан' && (
-                      <div className={styles.specsRow}>
-                        <div className={styles.specsLabel}>Материал</div>
-                        <div className={styles.specsValue}>{filteredProducts[activeProduct].specs.material}</div>
-                      </div>
-                    )}
-                    {filteredProducts[activeProduct].specs.dimensions && 
-                     filteredProducts[activeProduct].specs.dimensions.toLowerCase() !== 'не указан' && 
-                     filteredProducts[activeProduct].specs.dimensions.toLowerCase() !== 'не указаны' && (
-                      <div className={styles.specsRow}>
-                        <div className={styles.specsLabel}>Размеры</div>
-                        <div className={styles.specsValue}>{filteredProducts[activeProduct].specs.dimensions}</div>
-                      </div>
-                    )}
-                    {filteredProducts[activeProduct].specs.weight && 
-                     filteredProducts[activeProduct].specs.weight.toLowerCase() !== 'не указан' && (
-                      <div className={styles.specsRow}>
-                        <div className={styles.specsLabel}>Вес</div>
-                        <div className={styles.specsValue}>{filteredProducts[activeProduct].specs.weight}</div>
-                      </div>
-                    )}
-                  </div>
+                     ></div>
                 </div>
               </div>
             </div>
+
           </div>
-        </div>
+        </aside>
+
+        {/* Products Grid */}
+        <main className={styles.productsGridSection}>
+          <div className={styles.productsHeader}>
+            <h1>Все<span>Товары</span> <span className={styles.productsCount}>{filteredProducts.length}</span></h1>
+          </div>
+
+          <div className={styles.grid} key={viewKey}>
+            {paginatedProducts.map((product) => (
+              <div 
+                key={product.uid || product.id} 
+                className={styles.productCard}
+                onClick={() => handleProductClick(product.uid || `${product.collection}-${product.id}`)}
+              >
+                <div className={styles.productImage}>
+                  <img src={product.image} alt={product.name} loading="lazy" />
+                  <span className={styles.collectionTag}>
+                    {collections[product.collection] ? collections[product.collection].name : product.collection}
+                  </span>
+                </div>
+                <div className={styles.productInfo}>
+                  {product.article && <p className={styles.productArticle}>Арт: {product.article}</p>}
+                  <h3 className={styles.productName}>{product.name}</h3>
+                  <p className={styles.productPrice}>{product.price}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {filteredProducts.length === 0 ? (
+            <div className={styles.noResults}>
+              <h3>Нет товаров, соответствующих выбранным фильтрам</h3>
+              <button onClick={() => { 
+                  setSelectedCollections([]); 
+                  setSelectedCategories([]); 
+                  setSelectedMaterials([]);
+                  setSearchQuery('');
+                  setPriceRange([minPrice, maxPrice]);
+                }}>
+                Сбросить фильтры
+              </button>
+            </div>
+          ) : (
+             /* Pagination Controls */
+             totalPages > 1 && (
+                <div className={styles.pagination}>
+                  <button 
+                    onClick={() => handlePageChange(currentPage - 1)} 
+                    disabled={currentPage === 1}
+                    aria-label="Previous Page"
+                  >
+                    <ChevronLeft />
+                  </button>
+                  
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                     // Show first, last, current, and neighbors
+                     (page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1) ? (
+                        <button 
+                          key={page} 
+                          className={currentPage === page ? styles.active : ''}
+                          onClick={() => handlePageChange(page)}
+                        >
+                          {page}
+                        </button>
+                     ) : (
+                        (page === currentPage - 2 || page === currentPage + 2) && <span key={page} style={{ color: 'white' }}>...</span>
+                     )
+                  ))}
+
+                  <button 
+                    onClick={() => handlePageChange(currentPage + 1)} 
+                    disabled={currentPage === totalPages}
+                    aria-label="Next Page"
+                  >
+                    <ChevronRight />
+                  </button>
+                </div>
+             )
+          )}
+        </main>
       </div>
+      
+      <button 
+        className={styles.filterButton}
+        onClick={() => setIsMobileFiltersOpen(true)}
+        aria-label="Фильтры"
+      >
+        <FilterIcon />
+      </button>
+
+      <PhoneButton position="right" />
+      
+      <Footer />
     </div>
-  </div>
-  
-  {/* Модальная галерея */}
-  <ModalGallery
-    isOpen={isGalleryOpen}
-    onClose={closeGallery}
-    images={currentProductImages}
-    onNext={nextGalleryImage}
-    onPrev={prevGalleryImage}
-    onImageChange={handleGalleryImageChange}
-    currentImageIndex={galleryActiveImage}
-  />
-  
-  <Footer />
-  <PhoneButton theme="light" />
-</div>
-);
+  );
 };
+
 export default CatalogPage;

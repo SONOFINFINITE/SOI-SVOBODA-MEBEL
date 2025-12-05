@@ -13,6 +13,7 @@ export interface ProductVariant {
 
 export interface Product {
   id: number;
+  uid?: string; // Уникальный идентификатор (добавляется динамически)
   name: string;
   price: string;
   image: string;
@@ -37,25 +38,32 @@ export interface CollectionCategories {
 
 // Функция для получения всех изображений товара
 export const getProductImages = (product: Product): string[] => {
-  // Если у товара есть массив images, используем его
+  const mainImage = product.image;
+  const uniqueImages = new Set<string>([mainImage]);
+
+  // Если у товара есть массив images, добавляем их
   if (product.images && product.images.length > 0) {
-    return product.images;
+    product.images.forEach(img => uniqueImages.add(img));
+  } else {
+    // Иначе используем старую логику генерации
+    if (!product) return [];
+    
+    // Получаем базовый путь к папке с изображениями
+    const basePath = product.image.substring(0, product.image.lastIndexOf('/') + 1);
+    const imageName = product.image.substring(product.image.lastIndexOf('/') + 1);
+    const productName = imageName.split('-')[0];
+    
+    // Формируем массив из 3 изображений
+    const generatedImages = [
+      `${basePath}${productName}-1.webp`,
+      `${basePath}${productName}-2.webp`,
+      `${basePath}${productName}-3.webp`,
+    ];
+    
+    generatedImages.forEach(img => uniqueImages.add(img));
   }
-  
-  // Иначе используем старую логику
-  if (!product) return [];
-  
-  // Получаем базовый путь к папке с изображениями
-  const basePath = product.image.substring(0, product.image.lastIndexOf('/') + 1);
-  const imageName = product.image.substring(product.image.lastIndexOf('/') + 1);
-  const productName = imageName.split('-')[0];
-  
-  // Формируем массив из 3 изображений (предполагаем, что у каждого товара есть 3 фото)
-  return [
-    `${basePath}${productName}-1.webp`,
-    `${basePath}${productName}-2.webp`,
-    `${basePath}${productName}-3.webp`,
-  ];
+
+  return Array.from(uniqueImages);
 };
 
 export interface Collection {
@@ -76,8 +84,8 @@ import { sohoProducts } from './catalog_soho';
 import { sydneyProducts } from './catalog_sydney';
 import { diningGroupsProducts } from './catalog_dining-groups';
 
-// Объединяем все товары в один массив
-export const products: Product[] = [
+// Объединяем все товары в один массив и добавляем уникальные ID
+const rawProducts: Product[] = [
   ...artDecoProducts,
   ...bryceProducts,
   ...gvenProducts,
@@ -85,6 +93,11 @@ export const products: Product[] = [
   ...sydneyProducts,
   ...diningGroupsProducts
 ];
+
+export const products: Product[] = rawProducts.map(product => ({
+  ...product,
+  uid: `${product.collection.replace(/\s+/g, '-')}-${product.id}`
+}));
 
 // Данные о коллекциях - обновлены для соответствия новой структуре URL
 export const collections: Collections = {

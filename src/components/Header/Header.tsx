@@ -50,8 +50,9 @@ const Header: React.FC = () => {
   
   // Логика выбора логотипа
   // На всех страницах с /collections (включая /collections/*) логотип всегда белый
+  // На странице каталога логотип также всегда белый (так как фон темный)
   // На остальных страницах: белый по умолчанию, черный при скролле
-  const logoSrc = (isAnyCollectionsPage || !isScrolled) ? SVOBODA_LOGO_WHITE : SVOBODA_LOGO_BLACK;
+  const logoSrc = (isAnyCollectionsPage || isCatalogPage || !isScrolled) ? SVOBODA_LOGO_WHITE : SVOBODA_LOGO_BLACK;
 
   return (
     <header className={headerClasses}>
