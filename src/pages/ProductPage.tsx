@@ -8,17 +8,16 @@ import PhoneButton from '../components/PhoneButton/phone-button';
 import ModalGallery from '../components/ModalGallery/ModalGallery';
 import { products, collections, getCollectionIdFromName, getProductImages } from '../data/catalog';
 import styles from './ProductPage.module.scss';
-// Регистрируем плагин ScrollTrigger
+
 gsap.registerPlugin(ScrollTrigger);
 const ProductPage: React.FC = () => {
 const { collectionId, collectionName, uid } = useParams<{ collectionId?: string; collectionName?: string; uid?: string }>();
 const navigate = useNavigate();
 const [searchParams] = useSearchParams();
 
-// Находим товар по uid, если он есть
+
 const productFromUid = useMemo(() => uid ? products.find(p => p.uid === uid) : null, [uid]);
 
-// Определяем текущую коллекцию
 const currentCollectionId = useMemo(() => {
   if (collectionName) return getCollectionIdFromName(collectionName);
   if (collectionId) return collectionId;
@@ -26,15 +25,14 @@ const currentCollectionId = useMemo(() => {
   return null;
 }, [collectionName, collectionId, productFromUid]);
 
-// Получаем категорию из URL параметров
 const categoryParam = searchParams.get('category');
-// Фильтруем товары по коллекции и категории - используем useMemo для предотвращения пересоздания массива
+
   const filteredProducts = useMemo(() => {
     let filtered = currentCollectionId
       ? products.filter(product => product.collection === currentCollectionId)
       : products;
     
-    // Если указана категория, фильтруем по ней
+   
     if (categoryParam && categoryParam !== 'all') {
       filtered = filtered.filter(product => product.category === categoryParam);
     }

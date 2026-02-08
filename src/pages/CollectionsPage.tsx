@@ -63,7 +63,7 @@ const collections = [
 ];
 
 // Helper function to get category icons
-const getCategoryIcon = (categoryId: string): string => {
+const getCategoryIcon = (categoryId: string): any => {
   // Иконки из файлов
   const imageIcons: { [key: string]: string } = {
     'tumby': tumbyIcon,
@@ -84,22 +84,6 @@ const getCategoryIcon = (categoryId: string): string => {
   if (imageIcons[categoryId]) {
     return imageIcons[categoryId];
   }
-  
-  // Эмодзи иконки для остальных категорий
-  const emojiIcons: { [key: string]: string } = {
-    'kitchens': '🍳',
-    'wardrobes': '👔',
-    'living-rooms': '🛋️',
-    'bedrooms': '🛏️',
-    'hallways': '🚪',
-    'childrens-rooms': '🧸',
-    'bathrooms': '🛁',
-    'offices': '💼',
-    'dining-rooms': '🍽️',
-    'storage': '📦',
-    'accessories': '✨'
-  };
-  return emojiIcons[categoryId] || '🏠';
 };
 
 const CollectionsPage: React.FC = () => {
@@ -132,18 +116,11 @@ const CollectionsPage: React.FC = () => {
     
     return () => clearTimeout(timer);
   }, []);
-
-  // Автоматический слайдер для мобильных устройств (только для первых 3 коллекций)
-// Автоматический слайдер для мобильных устройств
 useEffect(() => {
-  // Остановить автопереключение если:
-  // - не мобильное устройство
-  // - открыто меню категорий
   if (!isMobile || showCategoryPicker) return;
 
   const interval = setInterval(() => {
     setSelectedCollection(current => {
-      // Используем visibleCollections вместо жестко заданных первых 3
       const availableCollections = showAllCollections ? collections : collections.slice(0, 4);
       const currentIndex = availableCollections.findIndex(col => col.id === current.id);
       const nextIndex = (currentIndex + 1) % availableCollections.length;
@@ -152,32 +129,31 @@ useEffect(() => {
   }, 3000);
 
   return () => clearInterval(interval);
-}, [isMobile, showCategoryPicker, showAllCollections]); // Добавили showAllCollections в зависимости
+}, [isMobile, showCategoryPicker, showAllCollections]); 
 
 
   const handleCollectionSelect = (collection: typeof collections[0]) => {
     setSelectedCollection(collection);
     setSelectedCategory('');
-    // This function only changes the preview - no animation triggered
   };
 
   const handleCollectionClick = (collection: typeof collections[0]) => {
     setSelectedCollection(collection);
     setSelectedCategory('');
     
-    // Trigger animation: hide collections menu and show category picker
+
     setShowCollectionsMenu(false);
     setTimeout(() => {
       setShowCategoryPicker(true);
-    }, 300); // Wait for fade out animation to complete
+    }, 300); 
   };
 
   const handleGoToCollection = (collection: typeof collections[0], category?: string) => {
-    // Преобразуем название коллекции в URL-friendly формат
+    
     const collectionName = collection.name.toLowerCase().replace(/\s+/g, '-');
-    // Используем переданную категорию или текущую выбранную
+    
     const categoryToUse = category !== undefined ? category : selectedCategory;
-    // Добавляем категорию в URL, если выбрана не "все"
+    
     const categoryParam = categoryToUse && categoryToUse !== 'all' ? `?category=${categoryToUse}` : '';
     console.log('Navigating to:', `/collections/${collectionName}${categoryParam}`, 'Collection:', collection.name, 'Category:', categoryToUse);
     navigate(`/collections/${collectionName}${categoryParam}`);
@@ -187,18 +163,16 @@ useEffect(() => {
     console.log('Category changed to:', categoryId, 'Current collection:', selectedCollection.name);
     setSelectedCategory(categoryId);
     
-    // Navigate to catalog with selected category after a short delay for visual feedback
     setTimeout(() => {
       handleGoToCollection(selectedCollection, categoryId);
     }, 200);
   };
 
   const handleBackToCollections = () => {
-    // Trigger animation: hide category picker and show collections menu
     setShowCategoryPicker(false);
     setTimeout(() => {
       setShowCollectionsMenu(true);
-    }, 300); // Wait for fade out animation to complete
+    }, 300); 
   };
 
   const handleShowAllCollections = () => {
@@ -215,8 +189,6 @@ useEffect(() => {
   return (
     <div className={`${styles.collectionsPage} ${isLoaded ? styles.loaded : ''}`}>
       <div className={styles.collectionsContainer}>
-    
-        {/* Превью коллекции слева */}
         <div className={`${styles.collectionPreview} ${styles.fadeInLeft}`}>
           <div 
             className={styles.previewBackground}
@@ -251,8 +223,6 @@ useEffect(() => {
             </div>
           </div>
         </div>
-
-        {/* Меню коллекций справа */}
         <div className={`${styles.collectionsMenu} ${styles.fadeInRight}`}>
           {/* Заголовок с названием коллекции */}
           <div className={`${styles.menuHeader} ${styles.fadeInUp}`} style={{ animationDelay: '0.1s' }}>
@@ -282,8 +252,6 @@ useEffect(() => {
               )}
             </div>
           </div>
-          
-          {/* Меню коллекций (анимированное появление/исчезновение) */}
           {showCollectionsMenu && (
             <div className={`${styles.collectionsList} ${styles.fadeIn}`}>
               <nav className={styles.menuNav}>
@@ -315,8 +283,6 @@ useEffect(() => {
               )}
             </div>
           )}
-          
-          {/* Выбор категории (анимированное появление/исчезновение) */}
           {showCategoryPicker && (
             <div className={`${styles.categorySelector} ${styles.fadeIn}`}>
               <div className={styles.categoryGrid}>
