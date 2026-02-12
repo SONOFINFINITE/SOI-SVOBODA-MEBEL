@@ -1,6 +1,15 @@
+/**
+ * Страница каталога. Товары: локальные (catalog.ts) + XML (fetchXmlProducts).
+ * Правки названий/цен/картинок — из getPublicProductOverrides (backend/data/product-overrides.json).
+ * Можно менять: фильтры, пагинацию, верстку карточек, стили.
+ */
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { products, collections, collectionCategories } from "../data/catalog";
+import { products as localProducts, collectionCategories, combineProducts, getCollectionDisplayName } from "../data/catalog";
+import type { Product } from "../data/catalog";
+import { fetchXmlProducts, getPublicProductOverrides } from "../utils/api";
+import type { ProductOverrides } from "../utils/api";
+import { useCart } from "../context/CartContext";
 import Header from "../components/Header/Header";
 import { Footer } from "../components/Footer/footer";
 import styles from "./CatalogPage.module.scss";
@@ -17,7 +26,11 @@ import zerkalaIcon from "../assets/zerkala_icon.png";
 import taburetyIcon from "../assets/taburety_icon.png";
 import banketkiIcon from "../assets/banketki_icon.png";
 import stelazhiIcon from "../assets/stelazhi_icon.png";
+import divaniIcon from "../assets/divani_icon.png";
+import poufiIcon from "../assets/poufi_icon.png";
+import otherIcon from "../assets/other_icon.png";
 import PhoneButton from "../components/PhoneButton/phone-button";
+import { usePageMeta } from "../utils/seo";
 
 const FilterIcon = () => (
   <svg
@@ -101,18 +114,22 @@ const getCategoryIcon = (categoryId: string): string => {
     "taburety-i-stulya": taburetyIcon,
     konsoli: konsoliIcon,
     vitriny: vitrinyIcon,
+    shkafy: vitrinyIcon,
     all: allIcon,
     krovati: krovatiIcon,
     zerkala: zerkalaIcon,
     taburety: taburetyIcon,
     banketki: banketkiIcon,
     stelazhi: stelazhiIcon,
+    divani: divaniIcon,
+    poufi: poufiIcon,
+    other: otherIcon,
   };
 
   if (imageIcons[categoryId]) {
     return imageIcons[categoryId];
   }
-  return "🏠";
+  return allIcon;
 };
 
 const parsePrice = (priceStr: string): number => {
@@ -124,6 +141,36 @@ const ITEMS_PER_PAGE = 20;
 const CatalogPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { addItem } = useCart();
+  usePageMeta('Каталог товаров', 'Каталог мебели СВОБОДА: все коллекции и категории. Bryce, Soho, Art Deco, Sydney, Gven, столовые группы.');
+
+  const [xmlProducts, setXmlProducts] = useState<Product[]>([]);
+  const [, setLoadingXml] = useState(true);
+  const [overrides, setOverrides] = useState<ProductOverrides>({});
+
+  const products = useMemo(() => {
+    return combineProducts(localProducts, xmlProducts);
+  }, [xmlProducts]);
+
+  useEffect(() => {
+    const loadXmlProducts = async () => {
+      try {
+        setLoadingXml(true);
+        const xmlData = await fetchXmlProducts();
+        setXmlProducts(xmlData);
+      } catch (error) {
+        console.error('Ошибка загрузки XML продуктов:', error);
+      } finally {
+        setLoadingXml(false);
+      }
+    };
+
+    loadXmlProducts();
+  }, []);
+
+  useEffect(() => {
+    getPublicProductOverrides().then(setOverrides);
+  }, []);
 
   const [selectedCollections, setSelectedCollections] = useState<string[]>(() =>
     searchParams.getAll("collection"),
@@ -142,7 +189,6 @@ const CatalogPage: React.FC = () => {
     parseInt(searchParams.get("page") || "1", 10),
   );
 
-  // Price Filter State
   const [minPrice, setMinPrice] = useState<number>(0);
   const [maxPrice, setMaxPrice] = useState<number>(1000000);
   const [priceRange, setPriceRange] = useState<[number, number]>(() => {
@@ -165,19 +211,36 @@ const CatalogPage: React.FC = () => {
         setPriceRange([min, max]);
       }
     }
-  }, []);
+  }, [products, searchParams]);
 
   const allCategories = useMemo(() => {
     const categories = new Set<string>();
     products.forEach((p) => categories.add(p.category));
     return Array.from(categories).sort();
-  }, []);
+  }, [products]);
 
   const allCollections = useMemo(() => {
     const cols = new Set<string>();
     products.forEach((p) => cols.add(p.collection));
-    return Array.from(cols).sort();
-  }, []);
+    const getSortGroup = (value: string) => {
+      const v = value.trim();
+      if (/^[A-Za-z]/.test(v)) return 0;
+      if (/^[А-Яа-яЁё]/.test(v)) return 1;
+      return 2;
+    };
+
+    const compare = (a: string, b: string) => {
+      const aName = getCollectionDisplayName(a);
+      const bName = getCollectionDisplayName(b);
+      const aGroup = getSortGroup(aName);
+      const bGroup = getSortGroup(bName);
+      if (aGroup !== bGroup) return aGroup - bGroup;
+      const locale = aGroup === 0 ? 'en' : aGroup === 1 ? 'ru' : undefined;
+      return aName.localeCompare(bName, locale, { sensitivity: 'base' });
+    };
+
+    return Array.from(cols).sort(compare);
+  }, [products]);
 
   const allMaterials = useMemo(() => {
     const materials = new Set<string>();
@@ -190,14 +253,17 @@ const CatalogPage: React.FC = () => {
       }
     });
     return Array.from(materials).sort();
-  }, []);
+  }, [products]);
 
   const getCategoryNameRu = (catId: string) => {
+    if (catId === 'other') return 'Другое';
+    if (catId === 'vitriny' || catId === 'shkafy') return 'Витрины / Шкафы';
+    if (catId === 'divani') return 'Диваны';
+    if (catId === 'poufi') return 'Пуфы';
     for (const colId in collectionCategories) {
       const category = collectionCategories[colId].find((c) => c.id === catId);
       if (category) return category.nameRu;
     }
-
     return catId.charAt(0).toUpperCase() + catId.slice(1).replace(/-/g, " ");
   };
 
@@ -242,6 +308,7 @@ const CatalogPage: React.FC = () => {
       );
     });
   }, [
+    products,
     selectedCollections,
     selectedCategories,
     selectedMaterials,
@@ -287,7 +354,6 @@ const CatalogPage: React.FC = () => {
     setSearchParams,
   ]);
 
-  // Pagination
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const paginatedProducts = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -378,7 +444,6 @@ const CatalogPage: React.FC = () => {
       />
 
       <div className={styles.catalogContainer}>
-        {/* Sidebar Filters */}
         <aside
           className={`${styles.filtersSidebar} ${isMobileFiltersOpen ? styles.open : ""}`}
         >
@@ -391,7 +456,6 @@ const CatalogPage: React.FC = () => {
           </button>
 
           <div className={styles.sidebarContent}>
-            {/* Search */}
             <div className={styles.searchSection}>
               <input
                 type="text"
@@ -402,7 +466,6 @@ const CatalogPage: React.FC = () => {
               />
             </div>
 
-            {/* Collections Filter */}
             <div className={styles.filterSection}>
               <h3>Коллекции</h3>
               <div className={styles.collectionPickers}>
@@ -412,15 +475,12 @@ const CatalogPage: React.FC = () => {
                     className={`${styles.collectionPicker} ${selectedCollections.includes(collection) ? styles.active : ""}`}
                     onClick={() => toggleCollection(collection)}
                   >
-                    {collections[collection]
-                      ? collections[collection].name
-                      : collection}
+                    {getCollectionDisplayName(collection)}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Categories Filter */}
             <div className={styles.filterSection}>
               <h3>Категории</h3>
               <div className={styles.categoryList}>
@@ -443,12 +503,10 @@ const CatalogPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Materials Filter */}
             <div className={styles.filterSection}>
               <h3>Материалы</h3>
               <div className={styles.collectionPickers}>
                 {" "}
-                {/* Reusing collection picker styles */}
                 {allMaterials.map((material) => (
                   <button
                     key={material}
@@ -461,7 +519,6 @@ const CatalogPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Price Filter */}
             <div className={styles.filterSection}>
               <h3>Цена</h3>
               <div className={styles.priceFilter}>
@@ -513,7 +570,6 @@ const CatalogPage: React.FC = () => {
           </div>
         </aside>
 
-        {/* Products Grid */}
         <main className={styles.productsGridSection}>
           <div className={styles.productsHeader}>
             <h1>
@@ -525,35 +581,67 @@ const CatalogPage: React.FC = () => {
           </div>
 
           <div className={styles.grid} key={viewKey}>
-            {paginatedProducts.map((product) => (
-              <div
-                key={product.uid || product.id}
-                className={styles.productCard}
-                onClick={() =>
-                  handleProductClick(
-                    product.uid || `${product.collection}-${product.id}`,
-                  )
-                }
-              >
-                <div className={styles.productImage}>
-                  <img src={product.image} alt={product.name} loading="lazy" />
-                  <span className={styles.collectionTag}>
-                    {collections[product.collection]
-                      ? collections[product.collection].name
-                      : product.collection}
-                  </span>
-                </div>
-                <div className={styles.productInfo}>
-                  {product.article && (
-                    <p className={styles.productArticle}>
-                      Арт: {product.article}
+            {paginatedProducts.map((product) => {
+              const productUid = product.uid || `${product.collection}-${product.id}`;
+              const o = overrides[productUid];
+              const displayName = o?.name ?? product.name;
+              const basePrice = o?.price ?? product.price;
+              const displayImage = o?.image ?? product.image;
+              const isSale = !!o?.isSale && !!o?.salePrice;
+              const displayPrice = isSale ? (o!.salePrice!) : basePrice;
+              const priceNum = parsePrice(displayPrice);
+              return (
+                <div
+                  key={productUid}
+                  className={styles.productCard}
+                  onClick={() => handleProductClick(productUid)}
+                >
+                  <div className={styles.productImage}>
+                    <img src={displayImage} alt={displayName} loading="lazy" />
+                    {isSale && <span className={styles.saleBadge}>Акция</span>}
+                    <span className={styles.collectionTag}>
+                      {getCollectionDisplayName(product.collection)}
+                    </span>
+                  </div>
+                  <div className={styles.productInfo}>
+                    {product.article && (
+                      <p className={styles.productArticle}>
+                        Арт: {product.article}
+                      </p>
+                    )}
+                    <h3 className={styles.productName}>{displayName}</h3>
+                    <p className={styles.productPrice}>
+                      {isSale ? (
+                        <>
+                          <span className={styles.oldPrice}>{basePrice}</span>{' '}
+                          <span className={styles.salePrice}>{displayPrice}</span>
+                        </>
+                      ) : (
+                        displayPrice
+                      )}
                     </p>
-                  )}
-                  <h3 className={styles.productName}>{product.name}</h3>
-                  <p className={styles.productPrice}>{product.price}</p>
+                    <button
+                      type="button"
+                      className={styles.buyButton}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addItem({
+                          productUid,
+                          name: displayName,
+                          price: displayPrice,
+                          priceNum,
+                          image: displayImage,
+                          quantity: 1,
+                          article: product.article,
+                        });
+                      }}
+                    >
+                      Купить
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {filteredProducts.length === 0 ? (
@@ -572,7 +660,6 @@ const CatalogPage: React.FC = () => {
               </button>
             </div>
           ) : (
-            /* Pagination Controls */
             totalPages > 1 && (
               <div className={styles.pagination}>
                 <button
@@ -585,7 +672,6 @@ const CatalogPage: React.FC = () => {
 
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                   (page) =>
-                    // Show first, last, current, and neighbors
                     page === 1 ||
                     page === totalPages ||
                     Math.abs(page - currentPage) <= 1 ? (

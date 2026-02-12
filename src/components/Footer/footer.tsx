@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import styles from './footer.module.scss';
 
 import SVOBODA_LOGO_BLACK from '../../assets/SVOBODA_LOGO_BLACK.png';
@@ -12,17 +12,19 @@ export interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({ className }) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const isCatalogPage = location.pathname.includes('/catalog') || 
-                         (location.pathname.includes('/collections') && location.pathname !== '/collections');
+    const isCatalogPage = location.pathname.includes('/catalog') ||
+                         (location.pathname.includes('/collections') && location.pathname !== '/collections') ||
+                         location.pathname === '/cart';
     
-    const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    const handleSmoothScroll = (e: React.MouseEvent, id: string) => {
         e.preventDefault();
-        if (isCatalogPage) {
-            navigate('/', { state: { scrollToId: id.replace('#', '') } });
-        } else {
+        if (location.pathname === '/') {
             document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            navigate('/', { state: { scrollToId: id.replace('#', '') } });
         }
     };
+
     
     return (
         <footer className={classNames(styles.footer, isCatalogPage ? styles.footer_dark : styles.footer_light, className)}>
@@ -50,9 +52,21 @@ export const Footer: React.FC<FooterProps> = ({ className }) => {
                 <div className={styles.footer__marquee_container}>
                     <div className={styles.footer__marquee}>
                         <div className={styles.footer__marquee_content}>
-                            <span>#НАШИ_КОНТАКТЫ</span>
-                            <span>#НАШИ_КОНТАКТЫ</span>
-                            <span>#НАШИ_КОНТАКТЫ</span>
+                            <span>СВОБОДА МЕБЕЛЬ</span>
+                            <span>•</span>
+                            <span>+7 (910) 823-72-72</span>
+                            <span>•</span>
+                            <span>КАЧЕСТВО И ДИЗАЙН</span>
+                            <span>•</span>
+                            <span>ДОСТАВКА ПО РОССИИ</span>
+                            <span>•</span>
+                            <span>СВОБОДА МЕБЕЛЬ</span>
+                            <span>•</span>
+                            <span>+7 (910) 823-72-72</span>
+                            <span>•</span>
+                            <span>КАЧЕСТВО И ДИЗАЙН</span>
+                            <span>•</span>
+                            <span>ДОСТАВКА ПО РОССИИ</span>
                         </div>
                     </div>
                 </div>
@@ -83,11 +97,22 @@ export const Footer: React.FC<FooterProps> = ({ className }) => {
                     <p>Свобода Мебель © {new Date().getFullYear()}</p>
                 </div>
                 <div className={styles.footer__menu}>
-                    <a href="#services" className={styles.footer__bottom_link} onClick={(e) => handleSmoothScroll(e, '#services')}>Почему мы</a>
-                    <a href="#hc" className={styles.footer__bottom_link} onClick={(e) => handleSmoothScroll(e, '#hc')}>Производство</a>
-                    <a href="#textonpic" className={styles.footer__bottom_link} onClick={(e) => handleSmoothScroll(e, '#textonpic')}>Экологичность</a>
-                    <a href="#faq" className={styles.footer__bottom_link} onClick={(e) => handleSmoothScroll(e, '#faq')}>FAQ</a>
-                    <a href="/collections" className={styles.footer__bottom_link}>Коллекции</a> 
+                    {isCatalogPage ? (
+                        <>
+                            <Link to="/" state={{ scrollToId: 'services' }} className={styles.footer__bottom_link}>Почему мы</Link>
+                            <Link to="/" state={{ scrollToId: 'hc' }} className={styles.footer__bottom_link}>Производство</Link>
+                            <Link to="/" state={{ scrollToId: 'textonpic' }} className={styles.footer__bottom_link}>Качество и материалы</Link>
+                            <Link to="/" state={{ scrollToId: 'faq' }} className={styles.footer__bottom_link}>FAQ</Link>
+                        </>
+                    ) : (
+                        <>
+                            <a href="#services" className={styles.footer__bottom_link} onClick={(e) => handleSmoothScroll(e, '#services')}>Почему мы</a>
+                            <a href="#hc" className={styles.footer__bottom_link} onClick={(e) => handleSmoothScroll(e, '#hc')}>Производство</a>
+                            <a href="#textonpic" className={styles.footer__bottom_link} onClick={(e) => handleSmoothScroll(e, '#textonpic')}>Качество и материалы</a>
+                            <a href="#faq" className={styles.footer__bottom_link} onClick={(e) => handleSmoothScroll(e, '#faq')}>FAQ</a>
+                        </>
+                    )}
+                    <Link to="/collections" className={styles.footer__bottom_link}>Коллекции</Link> 
                     
                 </div>
             </div>

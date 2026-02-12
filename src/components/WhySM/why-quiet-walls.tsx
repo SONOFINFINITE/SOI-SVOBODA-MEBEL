@@ -1,7 +1,7 @@
 import { type FC, useEffect, useRef } from 'react';
 import classNames from 'classnames';
 import styles from './why-quiet-walls.module.scss';
-import { Package, Truck, RefreshCcw } from 'lucide-react';
+import { Truck, Headphones, PencilRuler, ShieldCheck } from 'lucide-react';
 
 export interface WhyQuietWallsProps {
     className?: string;
@@ -38,19 +38,24 @@ export const WhySM: FC<WhyQuietWallsProps> = ({ className }) => {
 
     const advantages = [
         {
-            icon: <Package className={styles['wqw__card-icon-svg']} />,
-            title: 'Сделано на заказ',
-            description: 'Все изделия изготавливаются индивидуально для вас'
-        },
-        {
             icon: <Truck className={styles['wqw__card-icon-svg']} />,
-            title: 'Бесплатная доставка',
-            description: 'Бесплатная доставка для заказов по всему городу'
+            title: 'БЫСТРАЯ ДОСТАВКА',
+            description: 'Бережно доставляем товары по России'
         },
         {
-            icon: <RefreshCcw className={styles['wqw__card-icon-svg']} />,
-            title: 'Бесплатный обмен',
-            description: 'Бесплатный обмен на все товары в нашем ассортименте'
+            icon: <Headphones className={styles['wqw__card-icon-svg']} />,
+            title: 'КЛИЕНТСКИЙ СЕРВИС',
+            description: 'Менеджеры оперативно отвечают на вопросы покупателей в течение дня'
+        },
+        {
+            icon: <PencilRuler className={styles['wqw__card-icon-svg']} />,
+            title: 'СОЗДАЁМ ИНТЕРЬЕР С ДУШОЙ',
+            description: 'Российский бренд высококачественной мебели'
+        },
+        {
+            icon: <ShieldCheck className={styles['wqw__card-icon-svg']} />,
+            title: 'ГАРАНТИЯ КАЧЕСТВА',
+            description: 'Соответствуем требованиям и стандартам качества'
         }
     ];
 

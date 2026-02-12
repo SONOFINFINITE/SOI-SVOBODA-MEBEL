@@ -1,6 +1,3 @@
-// --- НАЧАЛО ФАЙЛА CatalogPage.module.scss ---
-
-// Экран загрузки
 .loaderContainer {
   position: fixed;
   top: 0;
@@ -89,7 +86,6 @@
   padding-top: 0;
 }
 
-// Пустая коллекция
 .emptyCollection {
   display: flex;
   flex-direction: column;
@@ -180,8 +176,6 @@
   transition: transform 0.8s ease;
   z-index: 5;
   cursor: pointer;
-  
-  // Делаем его flex-контейнером, чтобы управлять якорем
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -231,7 +225,6 @@
   }
 }
 
-// Уменьшение изображения для коллекции Dining Groups
 .productBackgroundDiningGroups {
   background-size: 60% !important;
   background-repeat: no-repeat !important;
@@ -440,6 +433,18 @@
   margin-bottom: 2rem;
   color: var(--color-accent);
   
+  .oldPrice {
+    text-decoration: line-through;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85em;
+    font-weight: 600;
+    margin-right: 0.5rem;
+  }
+  
+  .salePrice {
+    color: #e74c3c;
+  }
+  
   @media (max-width: 1200px) {
     font-size: 2rem;
   }
@@ -461,7 +466,6 @@
   }
 }
 
-// Переключатель вариантов товара
 .variantSelector {
   display: flex;
   gap: 0.75rem;
@@ -530,6 +534,70 @@
     background: white;
     color: #1a1a1a;
     border-color: white;
+  }
+}
+
+.buyButton {
+  padding: 0.75rem 1.5rem;
+  background: var(--color-accent, #d4c5b9);
+  border: none;
+  border-radius: 8px;
+  color: #1a1a1a;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+
+  &:hover {
+    background: #e5d5c9;
+    transform: translateY(-1px);
+  }
+}
+
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.catalogButton {
+  padding: 0.7rem 1.2rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(10px);
+
+  @media (max-width: 1024px) {
+    padding: 0.65rem 1.15rem;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 576px) {
+    padding: 0.6rem 1.05rem;
+    font-size: 0.85rem;
+    width: 100%;
+  }
+
+  @media (max-width: 375px) {
+    padding: 0.55rem 0.95rem;
+    font-size: 0.8rem;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 }
 
@@ -663,13 +731,11 @@
   }
 }
 
-// Анимации
 @keyframes fadeIn {
   from { opacity: 0; transform: translateX(-30px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
-// Стили для слайдера
 .sliderContainer {
   position: relative;
   height: 100vh;
@@ -763,26 +829,21 @@
   }
 }
 
-/* === НОВЫЕ СТИЛИ ДЛЯ ЯКОРЯ И ТОЧЕК === */
-
 .dotsAnchor {
-  position: relative; // Создаем контекст позиционирования
+  position: relative;
   width: 100%;
-  // Прижимаем якорь к низу родительского flex-контейнера (.productBackground)
-  // Это свойство не нужно, так как justify-content: flex-end уже делает это
-  z-index: 20; // Убедимся, что он выше градиентов
-  pointer-events: none; // Якорь не должен перехватывать клики
+  z-index: 20;
+  pointer-events: none;
 }
 
 .sliderDots {
-  // Теперь позиционируемся относительно якоря
   position: absolute;
   bottom: 3rem;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   gap: 0.75rem;
-  pointer-events: auto; // А сами точки должны быть кликабельны
+  pointer-events: auto;
 
   @media (max-width: 1024px) {
     bottom: 1.5rem;
@@ -831,9 +892,6 @@
   }
 }
 
-// --- КОНЕЦ ФАЙЛА CatalogPage.module.scss ---
-
-// Стили для выбора категории
 .categorySelector {
   padding: 2rem 0 1rem 0;
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), transparent);

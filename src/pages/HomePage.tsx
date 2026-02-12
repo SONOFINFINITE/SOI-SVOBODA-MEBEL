@@ -1,3 +1,7 @@
+/**
+ * Главная страница. Секции: Hero, WhySM, HandCrafted, KraabGippsInfo, Faq, Footer.
+ * location.state.scrollToId — скролл к секции (Почему мы, Производство и т.д.) при переходе с корзины/каталога.
+ */
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Header from '../components/Header/Header';
@@ -15,11 +19,8 @@ const HomePage: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Имитация загрузки
     const timer = setTimeout(() => {
       setLoading(false);
-      
-      // Проверяем, есть ли параметр scrollToId в state
       if (location.state && location.state.scrollToId) {
         const id = location.state.scrollToId;
         setTimeout(() => {
@@ -27,7 +28,7 @@ const HomePage: React.FC = () => {
           if (element) {
             element.scrollIntoView({ behavior: 'smooth' });
           }
-        }, 100); // Небольшая задержка, чтобы элементы успели отрендериться
+        }, 100);
       }
     }, 2500);
 
@@ -36,7 +37,6 @@ const HomePage: React.FC = () => {
 
   return (
     <>
-      {/* Загрузочный экран */}
       <div className={styles.loaderContainer}>
         <div className={styles.loader}>
           <div className={styles.loaderBar}></div>

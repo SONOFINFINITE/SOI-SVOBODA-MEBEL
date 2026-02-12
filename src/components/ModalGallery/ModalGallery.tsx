@@ -20,7 +20,6 @@ const ModalGallery: React.FC<ModalGalleryProps> = ({
   onImageChange,
   currentImageIndex,
 }) => {
-  // Handle keyboard navigation
   React.useEffect(() => {
     if (!isOpen) return;
 

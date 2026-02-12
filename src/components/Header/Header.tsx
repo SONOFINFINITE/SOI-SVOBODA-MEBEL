@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styles from './Header.module.scss';
 import DrawerMenu from '../Drawer/drawer-menu';
+import { useCart } from '../../context/CartContext';
 import SVOBODA_LOGO_BLACK from '../../assets/SVOBODA_LOGO_BLACK.png';
 import SVOBODA_LOGO_WHITE from '../../assets/SVOBODA_LOGO_WHITE.png';
 
@@ -9,19 +10,18 @@ const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { totalCount } = useCart();
   
-  // Проверяем, находимся ли мы на странице каталога или коллекций
   const isCatalogPage = location.pathname.includes('/catalog') || 
                        (location.pathname.includes('/collections') && location.pathname !== '/collections');
-  
-  // Проверяем, находимся ли мы на любой странице коллекций (включая /collections/*)
   const isAnyCollectionsPage = location.pathname.includes('/collections');
+  const isCartPage = location.pathname === '/cart';
+  const isCatalogLikePage = isCatalogPage || isCartPage;
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       
-      // Проверяем, прокручена ли страница достаточно для изменения стиля
       if (currentScrollY > 50) {
         setIsScrolled(true);
       } else {
@@ -40,19 +40,14 @@ const Header: React.FC = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  // Определяем классы хедера в зависимости от страницы и состояния скролла
   const headerClasses = [
     styles.header,
-    isCatalogPage ? (isScrolled ? styles.scrolled : '') : styles.mainPage,
-    !isCatalogPage && !isAnyCollectionsPage && isScrolled ? styles.scrolled : '',
+    isCatalogLikePage ? (isScrolled ? styles.scrolled : '') : styles.mainPage,
+    !isCatalogLikePage && !isAnyCollectionsPage && isScrolled ? styles.scrolled : '',
     isAnyCollectionsPage ? styles.collectionsPage : ''
   ].filter(Boolean).join(' ');
   
-  // Логика выбора логотипа
-  // На всех страницах с /collections (включая /collections/*) логотип всегда белый
-  // На странице каталога логотип также всегда белый (так как фон темный)
-  // На остальных страницах: белый по умолчанию, черный при скролле
-  const logoSrc = (isAnyCollectionsPage || isCatalogPage || !isScrolled) ? SVOBODA_LOGO_WHITE : SVOBODA_LOGO_BLACK;
+  const logoSrc = (isAnyCollectionsPage || isCatalogLikePage || !isScrolled) ? SVOBODA_LOGO_WHITE : SVOBODA_LOGO_BLACK;
 
   return (
     <header className={headerClasses}>
@@ -83,6 +78,16 @@ const Header: React.FC = () => {
         </div>
         
         <div className={styles.header__right}>
+          <Link to="/cart" className={styles.header__actionBtn} aria-label="Корзина">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            {totalCount > 0 && (
+              <span className={styles.header__cartCount}>{totalCount}</span>
+            )}
+          </Link>
           <Link to="/collections" className={styles.header__actionBtn} aria-label="Каталог">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>

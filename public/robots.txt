@@ -1,0 +1,10 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Админку и корзину не индексируем
+Disallow: /admin
+Disallow: /admin/
+Disallow: /cart
+
+Sitemap: https://svobodameb.ru/sitemap.xml

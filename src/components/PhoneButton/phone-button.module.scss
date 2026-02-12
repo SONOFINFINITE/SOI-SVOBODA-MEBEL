@@ -17,8 +17,7 @@
   z-index: 50;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
-  
-  // Анимация пульса
+
   &::before {
     content: '';
     position: absolute;
@@ -32,8 +31,7 @@
     transform: scale(1);
     animation: pulse 2s infinite;
   }
-  
-  // Иконка
+
   svg {
     position: relative;
     z-index: 1;
@@ -41,8 +39,7 @@
     height: 24px;
     transition: transform 0.3s ease;
   }
-  
-  // Hover эффекты
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
@@ -56,8 +53,7 @@
       opacity: 0.6;
     }
   }
-  
-  // Active эффект
+
   &:active {
     transform: translateY(0);
     
@@ -66,14 +62,12 @@
       opacity: 0.8;
     }
   }
-  
-  // Focus для доступности
+
   &:focus {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
-  
-  // Планшеты
+
   @media (max-width: $breakpoint-laptop) {
     bottom: 25px;
     left: 25px;
@@ -85,8 +79,7 @@
       height: 22px;
     }
   }
-  
-  // Планшеты (портрет)
+
   @media (max-width: $breakpoint-tablet) {
     bottom: 20px;
     left: 20px;
@@ -99,8 +92,6 @@
     }
   }
 
-  
-  // Мобильные устройства
   @media (max-width: $breakpoint-mobile) {
     bottom: 16px;
     left: 16px;
@@ -112,8 +103,7 @@
       height: 18px;
     }
   }
-  
-  // Очень маленькие экраны
+
   @media (max-width: 360px) {
     bottom: 12px;
     left: 12px;
@@ -147,7 +137,6 @@
   }
 }
 
-// Анимация пульса
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -163,7 +152,6 @@
   }
 }
 
-// Светлая тема кнопки
 .phoneButtonLight {
   background-color: var(--color-white);
   color: var(--color-primary);
@@ -189,7 +177,6 @@
   }
 }
 
-// Дополнительные стили для темной темы (если потребуется)
 .phoneButton.dark {
   background-color: var(--color-accent);
   color: var(--color-primary);

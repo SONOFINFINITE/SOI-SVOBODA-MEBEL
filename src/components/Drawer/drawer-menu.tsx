@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import classNames from 'classnames';
 import styles from './drawer-menu.module.scss';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useCart } from '../../context/CartContext';
 import SVOBODA_LOGO_BLACK from '../../assets/SVOBODA_LOGO_BLACK.png';
 import SVOBODA_LOGO_WHITE from '../../assets/SVOBODA_LOGO_WHITE.png';
 
@@ -15,24 +16,18 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({ isOpen, onClose }) => {
     const bodyRef = useRef<HTMLElement | null>(null);
     const location = useLocation();
     const navigate = useNavigate();
+    const { totalCount } = useCart();
     const isCatalogPage = location.pathname.includes('/catalog') || 
                          (location.pathname.includes('/collections') && location.pathname !== '/collections');
 
     useEffect(() => {
-        // Получаем ссылку на body для последующего использования
         bodyRef.current = document.body;
-        
         const disableScroll = () => {
-            // Сохраняем текущую позицию скролла
             scrollPositionRef.current = window.pageYOffset;
-            
-            // Добавляем стили для блокировки скролла, но сохраняем визуальное положение
             const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-            
             if (bodyRef.current) {
                 bodyRef.current.style.overflow = 'hidden';
                 bodyRef.current.style.paddingRight = `${scrollbarWidth}px`;
-                // Важно: НЕ меняем position, чтобы контент оставался на месте
             }
         };
         
@@ -97,8 +92,22 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({ isOpen, onClose }) => {
                                 navigate('/catalog');
                             }}>Каталог</a>
                         </li>
-                         <li>
-                            <a href="/collections">Коллекции</a>
+                        <li>
+                            <a href="/collections" onClick={(e) => {
+                                e.preventDefault();
+                                onClose();
+                                navigate('/collections');
+                            }}>Коллекции</a>
+                        </li>
+                        <li>
+                            <a href="/cart" onClick={(e) => {
+                                e.preventDefault();
+                                onClose();
+                                navigate('/cart');
+                            }}>
+                                Корзина
+                                {totalCount > 0 && <span className={styles.drawer__cartBadge}>{totalCount}</span>}
+                            </a>
                         </li>
                         <li>
                             <a href="#services" onClick={(e) => {
@@ -131,7 +140,7 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({ isOpen, onClose }) => {
                                 } else {
                                     document.querySelector('#textonpic')?.scrollIntoView({ behavior: 'smooth' });
                                 }
-                            }}>Экологичность</a>
+                            }}>Качество и материалы</a>
                         </li>
                         <li>
                             <a href="#faq" onClick={(e) => {

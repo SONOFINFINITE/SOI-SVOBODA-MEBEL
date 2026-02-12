@@ -5,13 +5,10 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  
-  /* Для Firefox */
   scrollbar-width: thin;
   scrollbar-color: var(--color-accent) transparent;
 }
 
-/* Основные стили скроллбара с принудительно прозрачным треком */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -47,7 +44,6 @@
   width: 0 !important;
 }
 
-/* Стили скроллбара для темных секций */
 .dark-bg::-webkit-scrollbar-track {
   background-color: transparent;
 }
@@ -66,7 +62,6 @@
   background-color: transparent;
 }
 
-/* Класс для применения кастомного скроллбара к конкретным элементам */
 .custom-scrollbar {
   &::-webkit-scrollbar {
     width: 6px;

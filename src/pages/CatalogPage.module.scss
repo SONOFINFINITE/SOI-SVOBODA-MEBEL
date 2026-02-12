@@ -6,7 +6,6 @@
   background-color: #111;
   color: white;
   padding-top: 0;
-  /* overflow-x: hidden; REMOVED to fix sticky sidebar */
   font-family: 'Inter', sans-serif;
 }
 
@@ -21,22 +20,18 @@
   }
 }
 
-/* Sidebar Filters */
 .filtersSidebar {
   width: 335px;
   background-color: #1a1a1a;
   border-right: 1px solid rgba(255, 255, 255, 0.1);
   padding: 2rem;
-  /* Sticky positioning */
   position: sticky;
-  top: 80px; /* Match header height */
+  top: 80px;
   height: calc(100vh - 80px);
   overflow-y: auto;
   flex-shrink: 0;
   z-index: 40;
   transition: transform 0.3s ease;
-  
-  /* Custom scrollbar - Hidden by default, visible on hover */
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
 
@@ -73,7 +68,7 @@
     transform: translateX(-100%);
     border-right: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
-    padding: 4rem 1.5rem 2rem; /* More top padding for close button */
+    padding: 4rem 1.5rem 2rem;
     
     &.open {
       transform: translateX(0);
@@ -136,7 +131,6 @@
   }
 }
 
-/* Sticky Filter Button (Bottom Left) */
 .filterButton {
   position: fixed;
   bottom: 30px;
@@ -207,7 +201,6 @@
   }
 }
 
-/* Hide old toggle */
 .mobileFilterToggle {
   display: none;
 }
@@ -251,7 +244,6 @@
   }
 }
 
-/* Collection Pickers */
 .collectionPickers {
   display: flex;
   flex-wrap: wrap;
@@ -262,7 +254,7 @@
   padding: 0.5rem 1rem;
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 6px; /* Less rounded */
+  border-radius: 6px;
   color: rgba(255, 255, 255, 0.7);
   font-family: inherit;
   font-size: 0.9rem;
@@ -282,10 +274,9 @@
   }
 }
 
-/* Categories List (Grid Layout) */
 .categoryList {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Two columns */
+  grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
 }
 
@@ -296,7 +287,7 @@
   padding: 0.6rem 0.8rem;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px; /* Slightly rounded rectangles */
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: left;
@@ -359,7 +350,6 @@
   }
 }
 
-/* Price Filter */
 .priceFilter {
   display: flex;
   flex-direction: column;
@@ -382,7 +372,6 @@
     font-size: 0.9rem;
     text-align: center;
     
-    /* Remove arrows/spinners */
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {
       -webkit-appearance: none;
@@ -476,10 +465,9 @@
   }
 }
 
-/* Products Grid Section */
 .productsGridSection {
   flex: 1;
-  padding: 6rem 3rem 3rem; /* Increased top padding from 3rem */
+  padding: 6rem 3rem 3rem;
   background-color: #111;
   min-height: 100vh;
   
@@ -532,7 +520,6 @@
   }
 }
 
-/* Product Card */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -554,7 +541,7 @@
   }
 
   background: rgba(255, 255, 255, 0.04);
-  border: 2px solid rgba(212, 197, 185, 0.3); /* Accent color with opacity */
+  border: 2px solid rgba(212, 197, 185, 0.3);
   border-radius: 8px;
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -562,13 +549,13 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 15px rgba(212, 197, 185, 0.05); /* Subtle accent glow */
+  box-shadow: 0 0 15px rgba(212, 197, 185, 0.05);
   
   &:hover {
     transform: translateY(-10px);
     background: rgba(255, 255, 255, 0.1);
     border-color: var(--color-accent, #d4c5b9);
-    box-shadow: 0 10px 30px rgba(212, 197, 185, 0.15); /* Stronger glow on hover */
+    box-shadow: 0 10px 30px rgba(212, 197, 185, 0.15);
     
     .productImage img {
       transform: scale(1.05);
@@ -607,6 +594,21 @@
     color: white;
     z-index: 3;
   }
+  
+  .saleBadge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #e74c3c;
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 2px;
+    color: white;
+    z-index: 3;
+  }
 }
 
 .productInfo {
@@ -625,7 +627,7 @@
   
   .productArticle {
     font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.6); /* Increased visibility */
+    color: rgba(255, 255, 255, 0.6);
     margin-bottom: 0.5rem;
     font-weight: 500;
   }
@@ -639,11 +641,43 @@
   
   .productPrice {
     margin-top: auto;
-    font-size: 1.3rem; /* Increased size */
+    font-size: 1.3rem;
     font-weight: 700;
     color: var(--color-accent, #d4c5b9);
+    
+    .oldPrice {
+      text-decoration: line-through;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.95rem;
+      font-weight: 500;
+      margin-right: 0.5rem;
+    }
+    
+    .salePrice {
+      color: #e74c3c;
+    }
+    
     letter-spacing: 0.5px;
     text-shadow: 0 2px 10px rgba(212, 197, 185, 0.15);
+  }
+
+  .buyButton {
+    margin-top: 0.75rem;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    background: var(--color-accent, #d4c5b9);
+    border: none;
+    border-radius: 6px;
+    color: #1a1a1a;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+
+    &:hover {
+      background: #e5d5c9;
+      transform: translateY(-1px);
+    }
   }
 }
 
@@ -671,7 +705,6 @@
   }
 }
 
-/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
