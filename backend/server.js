@@ -224,6 +224,64 @@ function getParamValue(offer, ...paramNames) {
   return null;
 }
 
+function parseDescriptionSpecs(description) {
+  if (!description) return {};
+  const text = String(description);
+  const specs = {};
+
+  // Material: ищем "Материал: ..." до <, точки или переноса строки
+  const matMatch = text.match(/Материал:\s*([^<.\n\r]+)/i);
+  if (matMatch) specs.material = matMatch[1].trim();
+
+  // Color: ищем "Цвет: ..."
+  const colMatch = text.match(/Цвет:\s*([^<.\n\r]+)/i);
+  if (colMatch) specs.color = colMatch[1].trim();
+
+  // Weight from table: <td>Вес...</td><td>VALUE</td>
+  const weightMatch = text.match(/<td>(?:Вес|Weight|Вес_1С)<\/td>\s*<td>\s*([\d,\.]+)\s*<\/td>/i);
+  if (weightMatch) specs.weight = weightMatch[1].trim();
+
+  // Dimensions: Priority 1 - ШВГ (Width/Height/Depth)
+  const shvgMatch = text.match(/<td>ШВГ<\/td>\s*<td>\s*([\d\.\/]+)\s*<\/td>/i);
+  if (shvgMatch) {
+    const parts = shvgMatch[1].split('/').map(s => s.trim());
+    if (parts.length === 3) {
+      // ШВГ = Ширина / Высота / Глубина
+      // Output format: Ширина x Глубина x Высота
+      specs.dimensions = `${parts[0]} x ${parts[2]} x ${parts[1]} см`;
+    }
+  }
+
+  // Dimensions: Priority 2 - Individual fields
+  if (!specs.dimensions) {
+    const getVal = (key) => {
+      const m = text.match(new RegExp(`<td>${key}<\\/td>\\s*<td>\\s*([\\d\\.,]+)\\s*<\\/td>`, 'i'));
+      return m ? parseFloat(m[1].replace(',', '.')) : null;
+    };
+
+    const w = getVal('Ширина');
+    const h = getVal('Высота');
+    const d = getVal('Глубина');
+
+    if (w || h || d) {
+      // Heuristic: if values are > 100, likely mm, convert to cm
+      const fmt = (v) => {
+        if (!v) return null;
+        return (v > 100 ? parseFloat((v / 10).toFixed(1)) : v).toString();
+      };
+      
+      const dims = [];
+      if (w) dims.push(fmt(w));
+      if (d) dims.push(fmt(d)); // Depth second
+      if (h) dims.push(fmt(h)); // Height third
+      
+      if (dims.length > 0) specs.dimensions = dims.join(' x ') + ' см';
+    }
+  }
+
+  return specs;
+}
+
 function convertXmlOfferToProduct(offer, categoriesMap) {
   const offerData = offer.$ || {};
   const id = parseInt(offerData.id) || 0;
@@ -245,12 +303,22 @@ function convertXmlOfferToProduct(offer, categoriesMap) {
   const price = formatPrice(priceValue);
   const name = offer.name?.[0]?._ || offer.name?.[0] || offer.model?.[0]?._ || offer.model?.[0] || 'Товар без названия';
   const article = offer.vendorCode?.[0]?._ || offer.vendorCode?.[0] || '';
+  
+  // Extract description and specs from it
+  const description = offer.description?.[0]?._ || offer.description?.[0] || '';
+  const descSpecs = parseDescriptionSpecs(description);
+
   let material = offer.material?.[0]?._ ?? offer.material?.[0];
   if (!material) material = getParamValue(offer, 'Материал', 'Material');
+  if (!material) material = descSpecs.material;
   material = material || 'Не указан';
+
   let dimensions = offer.dimensions?.[0]?._ ?? offer.dimensions?.[0];
   if (!dimensions || /не указан/i.test(String(dimensions))) {
     dimensions = getParamValue(offer, 'Размеры', 'Dimensions', 'Габариты');
+  }
+  if ((!dimensions || /не указан/i.test(String(dimensions))) && descSpecs.dimensions) {
+    dimensions = descSpecs.dimensions;
   }
   if (!dimensions || /не указан/i.test(String(dimensions))) {
     const shirina = getParamValue(offer, 'Ширина', 'Width');
@@ -262,10 +330,16 @@ function convertXmlOfferToProduct(offer, categoriesMap) {
     }
   }
   dimensions = dimensions || 'Не указаны';
+
   let weight = offer.weight?.[0]?._ ?? offer.weight?.[0];
   if (!weight) weight = getParamValue(offer, 'Вес', 'Weight');
+  if (!weight) weight = descSpecs.weight;
   weight = weight ? String(weight).replace(/\s*кг\s*$/i, '').trim() : null;
   
+  let color = getParamValue(offer, 'Цвет', 'Color');
+  if (!color) color = descSpecs.color;
+  color = color || 'Не указан';
+
   return {
     id: id,
     uid: `external-${id}`,
@@ -278,7 +352,8 @@ function convertXmlOfferToProduct(offer, categoriesMap) {
     specs: {
       material: material,
       dimensions: dimensions,
-      weight: weight ? `${weight} кг` : 'Не указан'
+      weight: weight ? `${weight} кг` : 'Не указан',
+      color: color
     },
     article: article,
     source: 'xml'
