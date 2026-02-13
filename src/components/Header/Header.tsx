@@ -13,7 +13,7 @@ const Header: React.FC = () => {
   const { totalCount } = useCart();
   
   const isCatalogPage = location.pathname.includes('/catalog') || 
-                       (location.pathname.includes('/collections') && location.pathname !== '/collections');
+    (location.pathname.includes('/collections') && location.pathname !== '/collections');
   const isAnyCollectionsPage = location.pathname.includes('/collections');
   const isCartPage = location.pathname === '/cart';
   const isCatalogLikePage = isCatalogPage || isCartPage;
